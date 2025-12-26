@@ -1,1 +1,7 @@
 project_id = "gozgjicoqkqstdseamuk"
+
+[functions.transform-achievement]
+verify_jwt = false
+
+[functions.enhance-summary]
+verify_jwt = false

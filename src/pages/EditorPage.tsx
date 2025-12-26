@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { ContactSection } from '@/components/resume/ContactSection';
 import { SummarySection } from '@/components/resume/SummarySection';
@@ -18,7 +18,8 @@ import {
   Eye, 
   Edit3,
   Loader2,
-  FileDown
+  FileDown,
+  Upload
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -28,11 +29,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { exportToPDF, downloadAsWord } from '@/lib/export';
+import { parseResume } from '@/lib/resumeParser';
 
 export default function EditorPage() {
-  const { resume, saveResume } = useResume();
+  const { resume, saveResume, importResumeData } = useResume();
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
   const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
     saveResume();
@@ -60,6 +64,37 @@ export default function EditorPage() {
     toast.success('Word document downloaded!');
   };
 
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const fileName = file.name.toLowerCase();
+    if (!fileName.endsWith('.pdf') && !fileName.endsWith('.docx') && !fileName.endsWith('.doc')) {
+      toast.error('Please upload a PDF or Word document');
+      return;
+    }
+
+    setIsImporting(true);
+    try {
+      const parsedData = await parseResume(file);
+      importResumeData(parsedData);
+      toast.success('Resume imported successfully!');
+    } catch (error) {
+      console.error('Import error:', error);
+      toast.error('Failed to import resume. Please try a different file.');
+    } finally {
+      setIsImporting(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="min-h-screen">
@@ -70,6 +105,26 @@ export default function EditorPage() {
               <p className="text-sm text-muted-foreground">Edit your master resume</p>
             </div>
             <div className="flex gap-3">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept=".pdf,.doc,.docx"
+                className="hidden"
+              />
+              <Button 
+                variant="outline" 
+                className="gap-2" 
+                onClick={handleImportClick}
+                disabled={isImporting}
+              >
+                {isImporting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Upload className="h-4 w-4" />
+                )}
+                Import
+              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="gap-2" disabled={isExporting}>

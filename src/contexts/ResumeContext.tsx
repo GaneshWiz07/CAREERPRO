@@ -61,6 +61,50 @@ interface ResumeContextType {
   addJobDescription: (jd: Omit<JobDescription, 'id' | 'createdAt'>) => void;
   setActiveJobDescription: (jd: JobDescription | null) => void;
   addTailoredResume: (tr: Omit<TailoredResume, 'id' | 'createdAt'>) => void;
+  importResumeData: (data: ImportedResumeData) => void;
+}
+
+interface ImportedResumeData {
+  contact: {
+    fullName: string;
+    email: string;
+    phone: string;
+    location: string;
+    linkedin: string;
+    website: string;
+  };
+  summary: string;
+  experience: Array<{
+    id: string;
+    company: string;
+    title: string;
+    location: string;
+    startDate: string;
+    endDate: string;
+    current: boolean;
+    bullets: string[];
+  }>;
+  education: Array<{
+    id: string;
+    school: string;
+    degree: string;
+    field: string;
+    graduationDate: string;
+    gpa: string;
+  }>;
+  skills: Array<{
+    id: string;
+    category: string;
+    items: string[];
+  }>;
+  certifications: Array<{
+    id: string;
+    name: string;
+    issuer: string;
+    date: string;
+    expirationDate: string;
+  }>;
+  detectedFont?: string;
 }
 
 const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
@@ -258,6 +302,56 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
     return newTR;
   };
 
+  const importResumeData = (data: ImportedResumeData) => {
+    // Convert imported data to resume format
+    const importedExperiences = data.experience.map(exp => ({
+      id: exp.id || crypto.randomUUID(),
+      company: exp.company,
+      title: exp.title,
+      location: exp.location,
+      startDate: exp.startDate,
+      endDate: exp.endDate,
+      current: exp.current,
+      bullets: exp.bullets,
+    }));
+
+    const importedEducation = data.education.map(edu => ({
+      id: edu.id || crypto.randomUUID(),
+      institution: edu.school,
+      degree: edu.degree,
+      field: edu.field,
+      location: '',
+      graduationDate: edu.graduationDate,
+      gpa: edu.gpa,
+    }));
+
+    // Flatten skills from categories
+    const importedSkills = data.skills.flatMap(skillGroup => 
+      skillGroup.items.map(item => ({
+        id: crypto.randomUUID(),
+        name: item,
+        category: skillGroup.category,
+      }))
+    );
+
+    const importedCertifications = data.certifications.map(cert => ({
+      id: cert.id || crypto.randomUUID(),
+      name: cert.name,
+      issuer: cert.issuer,
+      date: cert.date,
+      expirationDate: cert.expirationDate,
+    }));
+
+    updateResume({
+      contact: data.contact,
+      summary: data.summary,
+      experiences: importedExperiences.length > 0 ? importedExperiences : resume.experiences,
+      education: importedEducation.length > 0 ? importedEducation : resume.education,
+      skills: importedSkills.length > 0 ? importedSkills : resume.skills,
+      certifications: importedCertifications.length > 0 ? importedCertifications : resume.certifications,
+    });
+  };
+
   return (
     <ResumeContext.Provider
       value={{
@@ -289,6 +383,7 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
         addJobDescription,
         setActiveJobDescription,
         addTailoredResume,
+        importResumeData,
       }}
     >
       {children}

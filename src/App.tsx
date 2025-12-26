@@ -8,6 +8,11 @@ import EditorPage from "./pages/EditorPage";
 import TailorPage from "./pages/TailorPage";
 import AchievementsPage from "./pages/AchievementsPage";
 import AnalysisPage from "./pages/AnalysisPage";
+import ResumesPage from "./pages/ResumesPage";
+import InterviewPage from "./pages/InterviewPage";
+import SalaryPage from "./pages/SalaryPage";
+import HeatmapPage from "./pages/HeatmapPage";
+import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +30,11 @@ const App = () => (
             <Route path="/tailor" element={<TailorPage />} />
             <Route path="/achievements" element={<AchievementsPage />} />
             <Route path="/analysis" element={<AnalysisPage />} />
+            <Route path="/resumes" element={<ResumesPage />} />
+            <Route path="/interview" element={<InterviewPage />} />
+            <Route path="/salary" element={<SalaryPage />} />
+            <Route path="/heatmap" element={<HeatmapPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

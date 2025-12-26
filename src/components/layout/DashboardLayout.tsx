@@ -11,6 +11,9 @@ import {
   ChevronRight,
   Plus,
   FolderOpen,
+  MessageSquare,
+  DollarSign,
+  Flame,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -20,6 +23,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useResume } from '@/contexts/ResumeContext';
+import { useNavigate } from 'react-router-dom';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -30,11 +35,21 @@ const NAV_ITEMS = [
   { icon: Target, label: 'Job Tailoring', path: '/tailor' },
   { icon: Sparkles, label: 'Achievement Transformer', path: '/achievements' },
   { icon: BarChart3, label: 'ATS Analysis', path: '/analysis' },
+  { icon: Flame, label: 'Recruiter Heatmap', path: '/heatmap' },
+  { icon: MessageSquare, label: 'Interview Coach', path: '/interview' },
+  { icon: DollarSign, label: 'Salary Negotiation', path: '/salary' },
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { createNewResume } = useResume();
   const [collapsed, setCollapsed] = React.useState(false);
+
+  const handleNewResume = () => {
+    createNewResume();
+    navigate('/editor');
+  };
 
   return (
     <div className="flex h-screen bg-background">
@@ -77,6 +92,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Button
                   className={cn('w-full', collapsed && 'px-0')}
                   size={collapsed ? 'icon' : 'default'}
+                  onClick={handleNewResume}
                 >
                   <Plus className="h-4 w-4" />
                   {!collapsed && <span className="ml-2">New Resume</span>}
@@ -90,7 +106,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <Separator />
 
         {/* Navigation */}
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           <TooltipProvider delayDuration={0}>
             {NAV_ITEMS.map((item) => {
               const isActive = location.pathname === item.path;
@@ -130,7 +146,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Link
                   to="/resumes"
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors',
+                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                    location.pathname === '/resumes'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                     collapsed && 'justify-center px-0'
                   )}
                 >
@@ -151,7 +170,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Link
                   to="/settings"
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors',
+                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                    location.pathname === '/settings'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                     collapsed && 'justify-center px-0'
                   )}
                 >

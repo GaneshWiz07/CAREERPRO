@@ -43,7 +43,7 @@ export function SkillsSection() {
             <Wrench className="h-5 w-5 text-primary" />
             Skills
           </CardTitle>
-          <Button variant="outline" size="sm" onClick={addSkill} className="gap-2">
+          <Button variant="outline" size="sm" onClick={() => addSkill()} className="gap-2">
             <Plus className="h-4 w-4" />
             Add Skill
           </Button>
@@ -54,7 +54,7 @@ export function SkillsSection() {
           <div className="text-center py-8 text-muted-foreground">
             <Wrench className="h-12 w-12 mx-auto mb-3 opacity-50" />
             <p>No skills added yet</p>
-            <Button variant="link" onClick={addSkill} className="mt-2">
+            <Button variant="link" onClick={() => addSkill()} className="mt-2">
               Add your first skill
             </Button>
           </div>

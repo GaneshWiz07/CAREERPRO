@@ -1,11 +1,8 @@
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 
-// Set up PDF.js worker using legacy build that doesn't require worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url
-).toString();
+// Disable worker to avoid CORS/loading issues in browser
+pdfjsLib.GlobalWorkerOptions.workerSrc = '';
 
 interface ParsedResume {
   contact: {
@@ -305,7 +302,16 @@ function extractCertifications(text: string): ParsedResume['certifications'] {
 
 export async function parsePDF(file: File): Promise<ParsedResume> {
   const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  
+  // Use disableWorker option for browser compatibility
+  const loadingTask = pdfjsLib.getDocument({ 
+    data: arrayBuffer,
+    useWorkerFetch: false,
+    isEvalSupported: false,
+    useSystemFonts: true,
+  });
+  
+  const pdf = await loadingTask.promise;
   
   let fullText = '';
   let detectedFont = '';
@@ -322,11 +328,19 @@ export async function parsePDF(file: File): Promise<ParsedResume> {
       }
     }
     
+    // Better text extraction - preserve structure
     const pageText = textContent.items
-      .map((item: any) => item.str)
-      .join(' ');
+      .map((item: any) => {
+        if (item.hasEOL) {
+          return item.str + '\n';
+        }
+        return item.str + ' ';
+      })
+      .join('');
     fullText += pageText + '\n';
   }
+  
+  console.log('Extracted PDF text:', fullText.substring(0, 500));
   
   return parseResumeText(fullText, detectedFont);
 }
@@ -338,13 +352,26 @@ export async function parseWord(file: File): Promise<ParsedResume> {
 }
 
 function parseResumeText(text: string, detectedFont?: string): ParsedResume {
+  console.log('Parsing resume text, length:', text.length);
+  
+  const contact = extractContactInfo(text);
+  const summary = extractSummary(text);
+  const experience = extractExperience(text);
+  const education = extractEducation(text);
+  const skills = extractSkills(text);
+  const certifications = extractCertifications(text);
+  
+  console.log('Parsed contact:', contact);
+  console.log('Parsed experience count:', experience.length);
+  console.log('Parsed skills count:', skills.length);
+  
   return {
-    contact: extractContactInfo(text),
-    summary: extractSummary(text),
-    experience: extractExperience(text),
-    education: extractEducation(text),
-    skills: extractSkills(text),
-    certifications: extractCertifications(text),
+    contact,
+    summary,
+    experience,
+    education,
+    skills,
+    certifications,
     detectedFont
   };
 }

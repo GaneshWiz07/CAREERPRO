@@ -47,7 +47,7 @@ interface ResumeContextType {
   addEducation: () => void;
   updateEducation: (id: string, updates: Partial<Resume['education'][0]>) => void;
   removeEducation: (id: string) => void;
-  addSkill: () => void;
+  addSkill: (skillData?: { name: string; category: string }) => void;
   updateSkill: (id: string, updates: Partial<Resume['skills'][0]>) => void;
   removeSkill: (id: string) => void;
   addCertification: () => void;
@@ -168,11 +168,11 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
     updateResume({ education: resume.education.filter(edu => edu.id !== id) });
   };
 
-  const addSkill = () => {
+  const addSkill = (skillData?: { name: string; category: string }) => {
     const newSkill = {
       id: crypto.randomUUID(),
-      name: '',
-      category: 'Technical',
+      name: skillData?.name || '',
+      category: skillData?.category || 'Technical',
     };
     updateResume({ skills: [...resume.skills, newSkill] });
   };

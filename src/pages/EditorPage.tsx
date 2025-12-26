@@ -101,12 +101,14 @@ export default function EditorPage() {
     setIsImporting(true);
     setActiveTab('edit');
     try {
+      console.log('Starting resume parse for:', file.name);
       const parsedData = await parseResume(file);
+      console.log('Parsed data:', parsedData);
       importResumeData(parsedData);
       toast.success('Resume imported! Check the form fields below.');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Import error:', error);
-      toast.error('Failed to import resume. Please try a different file.');
+      toast.error(`Failed to import: ${error?.message || 'Unknown error'}`);
     } finally {
       setIsImporting(false);
       if (fileInputRef.current) {

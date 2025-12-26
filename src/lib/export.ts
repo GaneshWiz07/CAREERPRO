@@ -2,7 +2,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Resume } from '@/types/resume';
 
-export async function exportToPDF(resume: Resume): Promise<void> {
+export async function exportToPDF(resume: Resume, filename?: string): Promise<void> {
   const element = document.getElementById('resume-preview');
   if (!element) {
     throw new Error('Resume preview element not found');
@@ -31,7 +31,8 @@ export async function exportToPDF(resume: Resume): Promise<void> {
   const imgY = 0;
 
   pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
-  pdf.save(`${resume.contact.fullName || 'resume'}.pdf`);
+  const exportFilename = filename || resume.contact.fullName || 'resume';
+  pdf.save(`${exportFilename}.pdf`);
 }
 
 export function exportToText(resume: Resume): string {
@@ -100,13 +101,14 @@ export function exportToText(resume: Resume): string {
   return lines.join('\n');
 }
 
-export function downloadAsWord(resume: Resume): void {
+export function downloadAsWord(resume: Resume, filename?: string): void {
   const content = exportToText(resume);
   const blob = new Blob([content], { type: 'application/msword' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${resume.contact.fullName || 'resume'}.doc`;
+  const exportFilename = filename || resume.contact.fullName || 'resume';
+  a.download = `${exportFilename}.doc`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

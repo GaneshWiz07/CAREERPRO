@@ -9,7 +9,17 @@ import { CertificationsSection } from '@/components/resume/CertificationsSection
 import { ResumePreview } from '@/components/resume/ResumePreview';
 import { useResume } from '@/contexts/ResumeContext';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { 
   Save, 
   FileCheck, 
@@ -36,6 +46,9 @@ export default function EditorPage() {
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [exportType, setExportType] = useState<'pdf' | 'word'>('pdf');
+  const [exportFilename, setExportFilename] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
@@ -43,25 +56,32 @@ export default function EditorPage() {
     toast.success('Resume saved!');
   };
 
-  const handleExportPDF = async () => {
-    setActiveTab('preview');
-    setIsExporting(true);
-    try {
-      // Wait for preview to render
-      await new Promise(resolve => setTimeout(resolve, 500));
-      await exportToPDF(resume);
-      toast.success('PDF downloaded!');
-    } catch (error) {
-      console.error('Export error:', error);
-      toast.error('Failed to export PDF');
-    } finally {
-      setIsExporting(false);
-    }
+  const openExportDialog = (type: 'pdf' | 'word') => {
+    setExportType(type);
+    setExportFilename(resume.contact.fullName || 'resume');
+    setExportDialogOpen(true);
   };
 
-  const handleExportWord = () => {
-    downloadAsWord(resume);
-    toast.success('Word document downloaded!');
+  const handleExport = async () => {
+    setExportDialogOpen(false);
+    
+    if (exportType === 'pdf') {
+      setActiveTab('preview');
+      setIsExporting(true);
+      try {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await exportToPDF(resume, exportFilename);
+        toast.success('PDF downloaded!');
+      } catch (error) {
+        console.error('Export error:', error);
+        toast.error('Failed to export PDF');
+      } finally {
+        setIsExporting(false);
+      }
+    } else {
+      downloadAsWord(resume, exportFilename);
+      toast.success('Word document downloaded!');
+    }
   };
 
   const handleImportClick = () => {
@@ -79,16 +99,16 @@ export default function EditorPage() {
     }
 
     setIsImporting(true);
+    setActiveTab('edit');
     try {
       const parsedData = await parseResume(file);
       importResumeData(parsedData);
-      toast.success('Resume imported successfully!');
+      toast.success('Resume imported! Check the form fields below.');
     } catch (error) {
       console.error('Import error:', error);
       toast.error('Failed to import resume. Please try a different file.');
     } finally {
       setIsImporting(false);
-      // Reset file input
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -137,11 +157,11 @@ export default function EditorPage() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem onClick={handleExportPDF}>
+                  <DropdownMenuItem onClick={() => openExportDialog('pdf')}>
                     <FileDown className="h-4 w-4 mr-2" />
                     Download PDF
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleExportWord}>
+                  <DropdownMenuItem onClick={() => openExportDialog('word')}>
                     <FileText className="h-4 w-4 mr-2" />
                     Download Word
                   </DropdownMenuItem>
@@ -186,6 +206,40 @@ export default function EditorPage() {
             </TabsContent>
           </Tabs>
         </div>
+
+        <Dialog open={exportDialogOpen} onOpenChange={setExportDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Export Resume</DialogTitle>
+              <DialogDescription>
+                Enter a filename for your {exportType === 'pdf' ? 'PDF' : 'Word'} document.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <Label htmlFor="filename">Filename</Label>
+              <div className="flex items-center gap-2 mt-2">
+                <Input
+                  id="filename"
+                  value={exportFilename}
+                  onChange={(e) => setExportFilename(e.target.value)}
+                  placeholder="Enter filename"
+                />
+                <span className="text-muted-foreground">
+                  .{exportType === 'pdf' ? 'pdf' : 'doc'}
+                </span>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setExportDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleExport} disabled={!exportFilename.trim()}>
+                <Download className="h-4 w-4 mr-2" />
+                Download
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );

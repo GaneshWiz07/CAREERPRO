@@ -4,10 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown, Plus, Trash2, GripVertical } from 'lucide-react';
 import { CustomSection, CustomSectionItem } from '@/types/resume';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 
 export function CustomSectionsSection() {
   const { resume, updateResume } = useResume();
@@ -210,17 +210,70 @@ export function CustomSectionsSection() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label>Bullet Points (one per line)</Label>
-                        <Textarea
-                          value={item.bullets.join('\n')}
-                          onChange={e =>
-                            updateCustomSectionItem(section.id, item.id, {
-                              bullets: e.target.value.split('\n').filter(b => b.trim()),
-                            })
-                          }
-                          placeholder="• Point 1&#10;• Point 2"
-                          rows={4}
-                        />
+                        <div className="flex items-center justify-between">
+                          <Label>Bullet Points</Label>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              updateCustomSectionItem(section.id, item.id, {
+                                bullets: [...item.bullets, ''],
+                              });
+                            }}
+                            className="gap-1 text-xs"
+                          >
+                            <Plus className="h-3 w-3" />
+                            Add Bullet
+                          </Button>
+                        </div>
+                        {item.bullets.map((bullet, bulletIdx) => (
+                          <div key={bulletIdx} className="flex gap-2 items-start">
+                            <span className="text-muted-foreground mt-3">•</span>
+                            <div className="flex-1">
+                              <RichTextEditor
+                                content={bullet}
+                                onChange={(value) => {
+                                  const newBullets = [...item.bullets];
+                                  newBullets[bulletIdx] = value;
+                                  updateCustomSectionItem(section.id, item.id, {
+                                    bullets: newBullets,
+                                  });
+                                }}
+                                placeholder="Describe your achievement..."
+                                minHeight="60px"
+                              />
+                            </div>
+                            {item.bullets.length > 1 && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                  const newBullets = item.bullets.filter((_, i) => i !== bulletIdx);
+                                  updateCustomSectionItem(section.id, item.id, {
+                                    bullets: newBullets,
+                                  });
+                                }}
+                                className="h-8 w-8 text-destructive hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        ))}
+                        {item.bullets.length === 0 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              updateCustomSectionItem(section.id, item.id, {
+                                bullets: [''],
+                              });
+                            }}
+                          >
+                            <Plus className="h-4 w-4 mr-1" />
+                            Add first bullet point
+                          </Button>
+                        )}
                       </div>
                     </CollapsibleContent>
                   </div>

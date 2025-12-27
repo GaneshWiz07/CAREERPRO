@@ -4,7 +4,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Briefcase,
@@ -21,6 +20,7 @@ import {
 } from '@/components/ui/collapsible';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 
 export function ExperienceSection() {
   const { resume, addExperience, updateExperience, removeExperience } = useResume();
@@ -211,12 +211,14 @@ export function ExperienceSection() {
                         {exp.bullets.map((bullet, bulletIdx) => (
                           <div key={bulletIdx} className="flex gap-2 items-start">
                             <span className="text-muted-foreground mt-3">•</span>
-                            <Textarea
-                              value={bullet}
-                              onChange={(e) => handleUpdateBullet(exp.id, bulletIdx, e.target.value)}
-                              placeholder="Describe your achievement with metrics..."
-                              className="min-h-[60px] flex-1"
-                            />
+                            <div className="flex-1">
+                              <RichTextEditor
+                                content={bullet}
+                                onChange={(value) => handleUpdateBullet(exp.id, bulletIdx, value)}
+                                placeholder="Describe your achievement with metrics..."
+                                minHeight="60px"
+                              />
+                            </div>
                             <div className="flex flex-col gap-1">
                               <Button
                                 variant="ghost"

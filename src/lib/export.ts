@@ -1,6 +1,14 @@
 import jsPDF from 'jspdf';
 import { Resume } from '@/types/resume';
 
+// Template font mapping
+const TEMPLATE_FONTS: Record<string, string> = {
+  'classic': 'times',
+  'modern': 'helvetica',
+  'executive': 'times',
+  'technical': 'helvetica',
+};
+
 // Helper to strip HTML tags
 const stripHtml = (html: string): string => {
   if (!html) return '';
@@ -20,18 +28,30 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
     format: 'a4',
   });
 
+  // Get font based on selected template
+  const fontFamily = TEMPLATE_FONTS[resume.templateId] || 'helvetica';
+
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const margin = 15;
   const contentWidth = pageWidth - margin * 2;
   let y = margin;
 
+  // Helper to set font
+  const setFont = (isBold = false, isItalic = false) => {
+    let style = 'normal';
+    if (isBold && isItalic) style = 'bolditalic';
+    else if (isBold) style = 'bold';
+    else if (isItalic) style = 'italic';
+    pdf.setFont(fontFamily, style);
+  };
+
   // Helper to add text with word wrap
   const addText = (text: string, fontSize: number, isBold = false, color = '#000000') => {
     const cleanText = stripHtml(text);
     if (!cleanText) return;
     pdf.setFontSize(fontSize);
-    pdf.setFont('helvetica', isBold ? 'bold' : 'normal');
+    setFont(isBold);
     pdf.setTextColor(color);
     const lines = pdf.splitTextToSize(cleanText, contentWidth);
     pdf.text(lines, margin, y);
@@ -41,7 +61,7 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
   const addSectionHeader = (title: string) => {
     checkPageBreak(12);
     pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'bold');
+    setFont(true);
     pdf.setTextColor('#000000');
     pdf.text(title.toUpperCase(), margin, y);
     y += 4;
@@ -77,7 +97,7 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
       case 'contact': {
         // Contact Header - centered
         pdf.setFontSize(18);
-        pdf.setFont('helvetica', 'bold');
+        setFont(true);
         pdf.setTextColor('#000000');
         if (resume.contact.fullName) {
           const nameWidth = pdf.getTextWidth(resume.contact.fullName);
@@ -93,7 +113,7 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
         
         if (contactParts.length > 0) {
           pdf.setFontSize(9);
-          pdf.setFont('helvetica', 'normal');
+          setFont(false);
           pdf.setTextColor('#555555');
           const contactText = contactParts.join('  •  ');
           const contactWidth = pdf.getTextWidth(contactText);
@@ -120,7 +140,7 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
         if (!isEmptyContent(resume.summary)) {
           addSectionHeader('Professional Summary');
           pdf.setFontSize(9);
-          pdf.setFont('helvetica', 'normal');
+          setFont(false);
           pdf.setTextColor('#000000');
           const summaryText = stripHtml(resume.summary);
           const summaryLines = pdf.splitTextToSize(summaryText, contentWidth);
@@ -143,19 +163,19 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
             
             // Title and dates on same line
             pdf.setFontSize(9);
-            pdf.setFont('helvetica', 'bold');
+            setFont(true);
             pdf.setTextColor('#000000');
             const titleText = exp.title || 'Position';
             pdf.text(titleText, margin, y);
             
             const dateText = `${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}`;
-            pdf.setFont('helvetica', 'bold');
+            setFont(true);
             const dateWidth = pdf.getTextWidth(dateText);
             pdf.text(dateText, pageWidth - margin - dateWidth, y);
             y += 4;
             
             // Company and location
-            pdf.setFont('helvetica', 'normal');
+            setFont(false);
             pdf.setTextColor('#555555');
             const companyText = `${exp.company}${exp.location ? `, ${exp.location}` : ''}`;
             pdf.text(companyText, margin, y);
@@ -188,19 +208,19 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
             checkPageBreak(12);
             
             pdf.setFontSize(9);
-            pdf.setFont('helvetica', 'bold');
+            setFont(true);
             pdf.setTextColor('#000000');
             pdf.text(edu.degree || 'Degree', margin, y);
             
             const batch = edu.batchStart && edu.batchEnd ? `${edu.batchStart} - ${edu.batchEnd}` : edu.batchStart || edu.batchEnd || '';
             if (batch) {
-              pdf.setFont('helvetica', 'bold');
+              setFont(true);
               const batchWidth = pdf.getTextWidth(batch);
               pdf.text(batch, pageWidth - margin - batchWidth, y);
             }
             y += 4;
             
-            pdf.setFont('helvetica', 'normal');
+            setFont(false);
             pdf.setTextColor('#555555');
             const schoolText = `${edu.institution}${edu.location ? `, ${edu.location}` : ''}`;
             pdf.text(schoolText, margin, y);
@@ -235,12 +255,12 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
           Object.entries(skillsByCategory).forEach(([category, items]) => {
             checkPageBreak(6);
             pdf.setFontSize(9);
-            pdf.setFont('helvetica', 'bold');
+            setFont(true);
             pdf.setTextColor('#000000');
             const categoryText = `${category}: `;
             pdf.text(categoryText, margin, y);
             const categoryWidth = pdf.getTextWidth(categoryText);
-            pdf.setFont('helvetica', 'normal');
+            setFont(false);
             const skillsText = items.filter(Boolean).join(', ');
             const skillLines = pdf.splitTextToSize(skillsText, contentWidth - categoryWidth);
             pdf.text(skillLines[0], margin + categoryWidth, y);
@@ -267,12 +287,12 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
           resume.certifications.forEach(cert => {
             checkPageBreak(6);
             pdf.setFontSize(9);
-            pdf.setFont('helvetica', 'bold');
+            setFont(true);
             pdf.setTextColor('#000000');
             pdf.text(cert.name || 'Certification', margin, y);
             
             const dateText = `${cert.issuer} • ${cert.date}`;
-            pdf.setFont('helvetica', 'normal');
+            setFont(false);
             pdf.setTextColor('#555555');
             const dateWidth = pdf.getTextWidth(dateText);
             pdf.text(dateText, pageWidth - margin - dateWidth, y);
@@ -292,7 +312,7 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
             checkPageBreak(12);
             
             pdf.setFontSize(9);
-            pdf.setFont('helvetica', 'bold');
+            setFont(true);
             pdf.setTextColor('#000000');
             
             const titleText = item.title || 'Item';
@@ -301,13 +321,13 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
             // Add technologies in italic if present
             if (customSection.showTechnologies && item.technologies) {
               const titleWidth = pdf.getTextWidth(titleText + '    ');
-              pdf.setFont('helvetica', 'italic');
+              setFont(false, true);
               pdf.setTextColor('#555555');
               pdf.text(item.technologies, margin + titleWidth, y);
             }
             
             if (item.date) {
-              pdf.setFont('helvetica', 'bold');
+              setFont(true);
               pdf.setTextColor('#000000');
               const dateWidth = pdf.getTextWidth(item.date);
               pdf.text(item.date, pageWidth - margin - dateWidth, y);
@@ -315,7 +335,7 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
             y += 4;
             
             // Bullets
-            pdf.setFont('helvetica', 'normal');
+            setFont(false);
             pdf.setTextColor('#000000');
             item.bullets.filter(b => !isEmptyContent(b)).forEach(bullet => {
               const bulletText = `• ${stripHtml(bullet)}`;

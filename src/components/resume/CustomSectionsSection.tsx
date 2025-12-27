@@ -57,6 +57,7 @@ export function CustomSectionsSection() {
       id: crypto.randomUUID(),
       title: '',
       technologies: '',
+      date: '',
       bullets: [],
     };
     updateResume({
@@ -170,7 +171,7 @@ export function CustomSectionsSection() {
                       </div>
                     </CollapsibleTrigger>
                     <CollapsibleContent className="pt-4 space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-3 gap-4">
                         <div className="space-y-2">
                           <Label>Title</Label>
                           <Input
@@ -193,6 +194,18 @@ export function CustomSectionsSection() {
                               })
                             }
                             placeholder="React, Node.js, MongoDB"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Date</Label>
+                          <Input
+                            value={item.date}
+                            onChange={e =>
+                              updateCustomSectionItem(section.id, item.id, {
+                                date: e.target.value,
+                              })
+                            }
+                            placeholder="Jan 2024 - Mar 2024"
                           />
                         </div>
                       </div>

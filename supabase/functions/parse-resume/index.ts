@@ -103,6 +103,7 @@ Return ONLY valid JSON in this exact format:
         {
           "title": "string (project name or item title)",
           "technologies": "string (comma-separated list of technologies, tools, or frameworks used, e.g., 'React, Node.js, MongoDB')",
+          "date": "string (date range when the project was done, e.g., 'Jan 2024 - Mar 2024' or 'Dec 2023')",
           "bullets": ["string (key points, features, or achievements)"]
         }
       ]

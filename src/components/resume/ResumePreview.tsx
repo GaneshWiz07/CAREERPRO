@@ -170,9 +170,14 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
             {section.items.map((item) => (
               <div key={item.id} className="mb-2">
                 <div className="flex justify-between items-start">
-                  <h3 className="text-xs font-bold text-foreground">{item.title}</h3>
-                  {item.technologies && (
-                    <span className="text-xs text-muted-foreground italic">{item.technologies}</span>
+                  <div className="flex items-baseline gap-4 flex-1">
+                    <h3 className="text-xs font-bold text-foreground uppercase">{item.title}</h3>
+                    {item.technologies && (
+                      <span className="text-xs text-muted-foreground italic">{item.technologies}</span>
+                    )}
+                  </div>
+                  {item.date && (
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">{item.date}</span>
                   )}
                 </div>
                 {item.bullets.length > 0 && (

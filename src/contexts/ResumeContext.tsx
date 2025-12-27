@@ -114,6 +114,7 @@ interface ImportedResumeData {
     items: Array<{
       title: string;
       technologies: string;
+      date: string;
       bullets: string[];
     }>;
   }>;
@@ -366,6 +367,7 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
         id: crypto.randomUUID(),
         title: item.title || '',
         technologies: item.technologies || '',
+        date: item.date || '',
         bullets: item.bullets || [],
       })),
       order: 6 + index,

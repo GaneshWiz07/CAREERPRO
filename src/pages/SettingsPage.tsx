@@ -132,8 +132,8 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-2">
               <p className="text-sm text-muted-foreground">
-                <strong>Adaptive Career Portfolio</strong> - A 2026-ready platform for 
-                creating ATS-optimized resumes with AI-powered tailoring.
+                <strong>CareerPro</strong> - Your AI-powered career companion for crafting 
+                job-winning resumes that get past ATS and into the hands of recruiters.
               </p>
               <p className="text-sm text-muted-foreground">
                 Version 1.0.0

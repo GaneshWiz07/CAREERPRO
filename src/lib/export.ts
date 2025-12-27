@@ -1,5 +1,4 @@
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { Resume } from '@/types/resume';
 
 // Helper to strip HTML tags
@@ -15,97 +14,6 @@ const isEmptyContent = (content: string): boolean => {
 };
 
 export async function exportToPDF(resume: Resume, filename?: string): Promise<void> {
-  // Try to capture the preview element first
-  const previewElement = document.getElementById('resume-preview');
-  
-  if (previewElement) {
-    // Clone the element to avoid modifying the original
-    const clone = previewElement.cloneNode(true) as HTMLElement;
-    clone.style.width = '180mm'; // Content width (A4 width minus margins)
-    clone.style.padding = '0';
-    clone.style.backgroundColor = 'white';
-    clone.style.color = 'black';
-    clone.style.position = 'absolute';
-    clone.style.left = '-9999px';
-    clone.style.top = '0';
-    
-    // Ensure all text is black for PDF
-    clone.querySelectorAll('*').forEach((el) => {
-      const element = el as HTMLElement;
-      element.style.color = 'black';
-    });
-    
-    document.body.appendChild(clone);
-    
-    try {
-      const canvas = await html2canvas(clone, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff',
-      });
-      
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-      });
-      
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 15; // 15mm margin on all sides
-      const contentWidth = pageWidth - (margin * 2);
-      const contentHeight = pageHeight - (margin * 2);
-      
-      // Calculate scaled dimensions
-      const imgWidth = contentWidth;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      // Calculate how many pages we need
-      const totalPages = Math.ceil(imgHeight / contentHeight);
-      
-      for (let page = 0; page < totalPages; page++) {
-        if (page > 0) {
-          pdf.addPage();
-        }
-        
-        // Calculate the portion of the image to show on this page
-        const sourceY = page * (canvas.height / totalPages) * (contentHeight / imgHeight) * (canvas.height / imgHeight);
-        const sourceHeight = (contentHeight / imgHeight) * canvas.height;
-        
-        // Create a temporary canvas for this page's content
-        const pageCanvas = document.createElement('canvas');
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = Math.min(sourceHeight, canvas.height - (page * sourceHeight));
-        
-        const ctx = pageCanvas.getContext('2d');
-        if (ctx) {
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-          ctx.drawImage(
-            canvas,
-            0, page * sourceHeight, // source x, y
-            canvas.width, pageCanvas.height, // source width, height
-            0, 0, // destination x, y
-            pageCanvas.width, pageCanvas.height // destination width, height
-          );
-        }
-        
-        const pageImgData = pageCanvas.toDataURL('image/png');
-        const pageImgHeight = (pageCanvas.height * contentWidth) / pageCanvas.width;
-        
-        pdf.addImage(pageImgData, 'PNG', margin, margin, contentWidth, pageImgHeight);
-      }
-      
-      const exportFilename = filename || resume.contact.fullName || 'resume';
-      pdf.save(`${exportFilename}.pdf`);
-    } finally {
-      document.body.removeChild(clone);
-    }
-    return;
-  }
-  
-  // Fallback to programmatic generation if preview element not found
   const pdf = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
@@ -113,7 +21,8 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
   });
 
   const pageWidth = pdf.internal.pageSize.getWidth();
-  const margin = 20;
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const margin = 15;
   const contentWidth = pageWidth - margin * 2;
   let y = margin;
 
@@ -129,254 +38,302 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
     y += lines.length * (fontSize * 0.4) + 2;
   };
 
-  const addLine = () => {
-    pdf.setDrawColor(200, 200, 200);
+  const addSectionHeader = (title: string) => {
+    checkPageBreak(12);
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor('#000000');
+    pdf.text(title.toUpperCase(), margin, y);
+    y += 4;
+    pdf.setDrawColor(180, 180, 180);
     pdf.line(margin, y, pageWidth - margin, y);
     y += 4;
   };
 
   const checkPageBreak = (neededSpace: number) => {
-    if (y + neededSpace > pdf.internal.pageSize.getHeight() - margin) {
+    if (y + neededSpace > pageHeight - margin) {
       pdf.addPage();
       y = margin;
     }
   };
 
-  // Contact Header - centered
-  pdf.setFontSize(18);
-  pdf.setFont('helvetica', 'bold');
-  if (resume.contact.fullName) {
-    const nameWidth = pdf.getTextWidth(resume.contact.fullName);
-    pdf.text(resume.contact.fullName, (pageWidth - nameWidth) / 2, y);
-    y += 8;
-  }
-  
-  const contactParts = [
-    resume.contact.email,
-    resume.contact.phone,
-    resume.contact.location
-  ].filter(Boolean);
-  
-  if (contactParts.length > 0) {
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor('#666666');
-    const contactText = contactParts.join(' • ');
-    const contactWidth = pdf.getTextWidth(contactText);
-    pdf.text(contactText, (pageWidth - contactWidth) / 2, y);
-    y += 5;
-  }
-  
-  const linkParts = [resume.contact.linkedin, resume.contact.website].filter(Boolean);
-  if (linkParts.length > 0) {
-    pdf.setFontSize(9);
-    const linkText = linkParts.join(' • ');
-    const linkWidth = pdf.getTextWidth(linkText);
-    pdf.text(linkText, (pageWidth - linkWidth) / 2, y);
-    y += 5;
-  }
-  
-  addLine();
-  y += 2;
+  // Get ordered sections based on resume.sections
+  const allSections = [
+    ...resume.sections.filter(s => s.type !== 'custom'),
+    ...(resume.customSections || []).map(cs => ({
+      id: cs.id,
+      type: 'custom' as const,
+      title: cs.title,
+      order: cs.order,
+      visible: cs.visible,
+    })),
+  ].sort((a, b) => a.order - b.order);
 
-  // Summary
-  if (!isEmptyContent(resume.summary)) {
-    checkPageBreak(20);
-    addText('PROFESSIONAL SUMMARY', 10, true);
-    addLine();
-    addText(resume.summary, 9);
-    y += 4;
-  }
+  // Render each section in order
+  for (const section of allSections) {
+    if (!section.visible) continue;
 
-  // Experience
-  if (resume.experiences.length > 0) {
-    checkPageBreak(20);
-    addText('WORK EXPERIENCE', 10, true);
-    addLine();
-    
-    resume.experiences.forEach((exp, index) => {
-      checkPageBreak(30);
-      
-      // Title and company on left, dates on right
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor('#000000');
-      const titleText = exp.title || 'Position';
-      pdf.text(titleText, margin, y);
-      
-      const dateText = `${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}`;
-      const dateWidth = pdf.getTextWidth(dateText);
-      pdf.text(dateText, pageWidth - margin - dateWidth, y);
-      y += 4;
-      
-      pdf.setFont('helvetica', 'normal');
-      pdf.setTextColor('#666666');
-      pdf.setFontSize(9);
-      const companyText = `${exp.company}${exp.location ? `, ${exp.location}` : ''}`;
-      pdf.text(companyText, margin, y);
-      y += 5;
-      
-      pdf.setTextColor('#000000');
-      exp.bullets.filter(b => !isEmptyContent(b)).forEach(bullet => {
-        checkPageBreak(10);
-        const bulletText = `• ${stripHtml(bullet)}`;
-        const bulletLines = pdf.splitTextToSize(bulletText, contentWidth);
-        pdf.text(bulletLines, margin, y);
-        y += bulletLines.length * 3.5 + 1;
-      });
-      
-      if (index < resume.experiences.length - 1) y += 3;
-    });
-    y += 4;
-  }
-
-  // Education
-  if (resume.education.length > 0) {
-    checkPageBreak(20);
-    addText('EDUCATION', 10, true);
-    addLine();
-    
-    resume.education.forEach((edu, index) => {
-      checkPageBreak(20);
-      
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor('#000000');
-      pdf.text(edu.degree || 'Degree', margin, y);
-      
-      const batch = edu.batchStart && edu.batchEnd ? `${edu.batchStart} - ${edu.batchEnd}` : edu.batchStart || edu.batchEnd || '';
-      if (batch) {
-        const batchWidth = pdf.getTextWidth(batch);
-        pdf.text(batch, pageWidth - margin - batchWidth, y);
-      }
-      y += 4;
-      
-      pdf.setFont('helvetica', 'normal');
-      pdf.setTextColor('#666666');
-      const schoolText = `${edu.institution}${edu.location ? `, ${edu.location}` : ''}`;
-      pdf.text(schoolText, margin, y);
-      y += 4;
-      
-      if (edu.gpa || !isEmptyContent(edu.honors || '')) {
-        const extras = [];
-        if (edu.gpa) extras.push(`GPA: ${edu.gpa}`);
-        if (!isEmptyContent(edu.honors || '')) extras.push(stripHtml(edu.honors || ''));
-        pdf.text(extras.join(' | '), margin, y);
-        y += 4;
-      }
-      
-      if (index < resume.education.length - 1) y += 2;
-    });
-    y += 4;
-  }
-
-  // Skills - grouped by category
-  if (resume.skills.length > 0) {
-    checkPageBreak(20);
-    addText('SKILLS', 10, true);
-    addLine();
-    
-    const skillsByCategory = resume.skills.reduce((acc, skill) => {
-      const category = skill.category || 'Other';
-      if (!acc[category]) acc[category] = [];
-      acc[category].push(skill.name);
-      return acc;
-    }, {} as Record<string, string[]>);
-    
-    Object.entries(skillsByCategory).forEach(([category, items]) => {
-      checkPageBreak(10);
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor('#000000');
-      const categoryText = `${category}: `;
-      pdf.text(categoryText, margin, y);
-      const categoryWidth = pdf.getTextWidth(categoryText);
-      pdf.setFont('helvetica', 'normal');
-      const skillsText = items.filter(Boolean).join(', ');
-      const skillLines = pdf.splitTextToSize(skillsText, contentWidth - categoryWidth);
-      pdf.text(skillLines[0], margin + categoryWidth, y);
-      if (skillLines.length > 1) {
-        y += 4;
-        for (let i = 1; i < skillLines.length; i++) {
-          pdf.text(skillLines[i], margin, y);
-          y += 4;
-        }
-      } else {
-        y += 4;
-      }
-    });
-    y += 4;
-  }
-
-  // Certifications
-  if (resume.certifications.length > 0) {
-    checkPageBreak(20);
-    addText('CERTIFICATIONS', 10, true);
-    addLine();
-    
-    resume.certifications.forEach(cert => {
-      checkPageBreak(10);
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor('#000000');
-      pdf.text(cert.name || 'Certification', margin, y);
-      
-      const dateText = `${cert.issuer} • ${cert.date}`;
-      pdf.setFont('helvetica', 'normal');
-      pdf.setTextColor('#666666');
-      const dateWidth = pdf.getTextWidth(dateText);
-      pdf.text(dateText, pageWidth - margin - dateWidth, y);
-      y += 5;
-    });
-  }
-
-  // Custom Sections
-  if (resume.customSections && resume.customSections.length > 0) {
-    resume.customSections.forEach(section => {
-      checkPageBreak(20);
-      addText(section.title.toUpperCase(), 10, true);
-      addLine();
-      
-      section.items.forEach((item, index) => {
-        checkPageBreak(20);
-        
-        pdf.setFontSize(9);
+    switch (section.type) {
+      case 'contact': {
+        // Contact Header - centered
+        pdf.setFontSize(18);
         pdf.setFont('helvetica', 'bold');
         pdf.setTextColor('#000000');
-        
-        let titleLine = item.title || 'Item';
-        if (section.showTechnologies && item.technologies) {
-          pdf.text(titleLine, margin, y);
-          const titleWidth = pdf.getTextWidth(titleLine + '  ');
-          pdf.setFont('helvetica', 'italic');
-          pdf.setTextColor('#666666');
-          pdf.text(item.technologies, margin + titleWidth, y);
-        } else {
-          pdf.text(titleLine, margin, y);
+        if (resume.contact.fullName) {
+          const nameWidth = pdf.getTextWidth(resume.contact.fullName);
+          pdf.text(resume.contact.fullName, (pageWidth - nameWidth) / 2, y);
+          y += 7;
         }
         
-        if (item.date) {
-          pdf.setFont('helvetica', 'bold');
-          pdf.setTextColor('#000000');
-          const dateWidth = pdf.getTextWidth(item.date);
-          pdf.text(item.date, pageWidth - margin - dateWidth, y);
+        const contactParts = [
+          resume.contact.email,
+          resume.contact.phone,
+          resume.contact.location
+        ].filter(Boolean);
+        
+        if (contactParts.length > 0) {
+          pdf.setFontSize(9);
+          pdf.setFont('helvetica', 'normal');
+          pdf.setTextColor('#555555');
+          const contactText = contactParts.join('  •  ');
+          const contactWidth = pdf.getTextWidth(contactText);
+          pdf.text(contactText, (pageWidth - contactWidth) / 2, y);
+          y += 4;
         }
+        
+        const linkParts = [resume.contact.linkedin, resume.contact.website].filter(Boolean);
+        if (linkParts.length > 0) {
+          pdf.setFontSize(9);
+          const linkText = linkParts.join('  •  ');
+          const linkWidth = pdf.getTextWidth(linkText);
+          pdf.text(linkText, (pageWidth - linkWidth) / 2, y);
+          y += 4;
+        }
+        
+        pdf.setDrawColor(180, 180, 180);
+        pdf.line(margin, y, pageWidth - margin, y);
         y += 5;
-        
-        pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor('#000000');
-        item.bullets.filter(b => !isEmptyContent(b)).forEach(bullet => {
-          checkPageBreak(10);
-          const bulletText = `• ${stripHtml(bullet)}`;
-          const bulletLines = pdf.splitTextToSize(bulletText, contentWidth);
-          pdf.text(bulletLines, margin, y);
-          y += bulletLines.length * 3.5 + 1;
-        });
-        
-        if (index < section.items.length - 1) y += 2;
-      });
-      y += 4;
-    });
+        break;
+      }
+
+      case 'summary': {
+        if (!isEmptyContent(resume.summary)) {
+          addSectionHeader('Professional Summary');
+          pdf.setFontSize(9);
+          pdf.setFont('helvetica', 'normal');
+          pdf.setTextColor('#000000');
+          const summaryText = stripHtml(resume.summary);
+          const summaryLines = pdf.splitTextToSize(summaryText, contentWidth);
+          for (const line of summaryLines) {
+            checkPageBreak(4);
+            pdf.text(line, margin, y);
+            y += 3.5;
+          }
+          y += 4;
+        }
+        break;
+      }
+
+      case 'experience': {
+        if (resume.experiences.length > 0) {
+          addSectionHeader('Work Experience');
+          
+          resume.experiences.forEach((exp, index) => {
+            checkPageBreak(15);
+            
+            // Title and dates on same line
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor('#000000');
+            const titleText = exp.title || 'Position';
+            pdf.text(titleText, margin, y);
+            
+            const dateText = `${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}`;
+            pdf.setFont('helvetica', 'bold');
+            const dateWidth = pdf.getTextWidth(dateText);
+            pdf.text(dateText, pageWidth - margin - dateWidth, y);
+            y += 4;
+            
+            // Company and location
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor('#555555');
+            const companyText = `${exp.company}${exp.location ? `, ${exp.location}` : ''}`;
+            pdf.text(companyText, margin, y);
+            y += 4;
+            
+            // Bullets
+            pdf.setTextColor('#000000');
+            exp.bullets.filter(b => !isEmptyContent(b)).forEach(bullet => {
+              const bulletText = `• ${stripHtml(bullet)}`;
+              const bulletLines = pdf.splitTextToSize(bulletText, contentWidth - 2);
+              for (let i = 0; i < bulletLines.length; i++) {
+                checkPageBreak(4);
+                pdf.text(bulletLines[i], margin + (i > 0 ? 3 : 0), y);
+                y += 3.5;
+              }
+            });
+            
+            if (index < resume.experiences.length - 1) y += 2;
+          });
+          y += 3;
+        }
+        break;
+      }
+
+      case 'education': {
+        if (resume.education.length > 0) {
+          addSectionHeader('Education');
+          
+          resume.education.forEach((edu, index) => {
+            checkPageBreak(12);
+            
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor('#000000');
+            pdf.text(edu.degree || 'Degree', margin, y);
+            
+            const batch = edu.batchStart && edu.batchEnd ? `${edu.batchStart} - ${edu.batchEnd}` : edu.batchStart || edu.batchEnd || '';
+            if (batch) {
+              pdf.setFont('helvetica', 'bold');
+              const batchWidth = pdf.getTextWidth(batch);
+              pdf.text(batch, pageWidth - margin - batchWidth, y);
+            }
+            y += 4;
+            
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor('#555555');
+            const schoolText = `${edu.institution}${edu.location ? `, ${edu.location}` : ''}`;
+            pdf.text(schoolText, margin, y);
+            y += 4;
+            
+            if (edu.gpa || !isEmptyContent(edu.honors || '')) {
+              const extras = [];
+              if (edu.gpa) extras.push(`GPA: ${edu.gpa}`);
+              if (!isEmptyContent(edu.honors || '')) extras.push(stripHtml(edu.honors || ''));
+              pdf.text(extras.join(' | '), margin, y);
+              y += 4;
+            }
+            
+            if (index < resume.education.length - 1) y += 1;
+          });
+          y += 3;
+        }
+        break;
+      }
+
+      case 'skills': {
+        if (resume.skills.length > 0) {
+          addSectionHeader('Skills');
+          
+          const skillsByCategory = resume.skills.reduce((acc, skill) => {
+            const category = skill.category || 'Other';
+            if (!acc[category]) acc[category] = [];
+            acc[category].push(skill.name);
+            return acc;
+          }, {} as Record<string, string[]>);
+          
+          Object.entries(skillsByCategory).forEach(([category, items]) => {
+            checkPageBreak(6);
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor('#000000');
+            const categoryText = `${category}: `;
+            pdf.text(categoryText, margin, y);
+            const categoryWidth = pdf.getTextWidth(categoryText);
+            pdf.setFont('helvetica', 'normal');
+            const skillsText = items.filter(Boolean).join(', ');
+            const skillLines = pdf.splitTextToSize(skillsText, contentWidth - categoryWidth);
+            pdf.text(skillLines[0], margin + categoryWidth, y);
+            if (skillLines.length > 1) {
+              y += 3.5;
+              for (let i = 1; i < skillLines.length; i++) {
+                checkPageBreak(4);
+                pdf.text(skillLines[i], margin, y);
+                y += 3.5;
+              }
+            } else {
+              y += 3.5;
+            }
+          });
+          y += 3;
+        }
+        break;
+      }
+
+      case 'certifications': {
+        if (resume.certifications.length > 0) {
+          addSectionHeader('Certifications');
+          
+          resume.certifications.forEach(cert => {
+            checkPageBreak(6);
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor('#000000');
+            pdf.text(cert.name || 'Certification', margin, y);
+            
+            const dateText = `${cert.issuer} • ${cert.date}`;
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor('#555555');
+            const dateWidth = pdf.getTextWidth(dateText);
+            pdf.text(dateText, pageWidth - margin - dateWidth, y);
+            y += 4;
+          });
+          y += 3;
+        }
+        break;
+      }
+
+      case 'custom': {
+        const customSection = (resume.customSections || []).find(cs => cs.id === section.id);
+        if (customSection && customSection.items.length > 0) {
+          addSectionHeader(customSection.title);
+          
+          customSection.items.forEach((item, index) => {
+            checkPageBreak(12);
+            
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor('#000000');
+            
+            const titleText = item.title || 'Item';
+            pdf.text(titleText, margin, y);
+            
+            // Add technologies in italic if present
+            if (customSection.showTechnologies && item.technologies) {
+              const titleWidth = pdf.getTextWidth(titleText + '    ');
+              pdf.setFont('helvetica', 'italic');
+              pdf.setTextColor('#555555');
+              pdf.text(item.technologies, margin + titleWidth, y);
+            }
+            
+            if (item.date) {
+              pdf.setFont('helvetica', 'bold');
+              pdf.setTextColor('#000000');
+              const dateWidth = pdf.getTextWidth(item.date);
+              pdf.text(item.date, pageWidth - margin - dateWidth, y);
+            }
+            y += 4;
+            
+            // Bullets
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor('#000000');
+            item.bullets.filter(b => !isEmptyContent(b)).forEach(bullet => {
+              const bulletText = `• ${stripHtml(bullet)}`;
+              const bulletLines = pdf.splitTextToSize(bulletText, contentWidth - 2);
+              for (let i = 0; i < bulletLines.length; i++) {
+                checkPageBreak(4);
+                pdf.text(bulletLines[i], margin + (i > 0 ? 3 : 0), y);
+                y += 3.5;
+              }
+            });
+            
+            if (index < customSection.items.length - 1) y += 2;
+          });
+          y += 3;
+        }
+        break;
+      }
+    }
   }
 
   const exportFilename = filename || resume.contact.fullName || 'resume';
@@ -478,18 +435,4 @@ export function exportToText(resume: Resume): string {
   }
 
   return lines.join('\n');
-}
-
-export function downloadAsWord(resume: Resume, filename?: string): void {
-  const content = exportToText(resume);
-  const blob = new Blob([content], { type: 'application/msword' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  const exportFilename = filename || resume.contact.fullName || 'resume';
-  a.download = `${exportFilename}.doc`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 }

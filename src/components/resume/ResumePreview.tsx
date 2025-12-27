@@ -15,9 +15,22 @@ const isEmptyContent = (content: string): boolean => {
   return !stripped || stripped === '';
 };
 
-// Render HTML content inline without block elements
+// Render HTML content - handles lists and inline formatting
 const RenderHtml = ({ html, className }: { html: string; className?: string }) => {
-  // Convert block elements to inline for proper bullet rendering
+  // Check if content contains list elements
+  const hasList = /<[uo]l>/.test(html);
+  
+  if (hasList) {
+    // Render lists properly
+    return (
+      <div 
+        className={cn("formatted-list", className)}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    );
+  }
+  
+  // Convert block elements to inline for non-list content
   const inlineHtml = html
     .replace(/<p>/g, '')
     .replace(/<\/p>/g, '')
@@ -62,6 +75,10 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
         .resume-content u { text-decoration: underline; }
         .resume-content s { text-decoration: line-through; }
         .resume-content a { color: inherit; text-decoration: underline; }
+        .resume-content .formatted-list ul { list-style-type: disc; margin-left: 1rem; }
+        .resume-content .formatted-list ol { list-style-type: decimal; margin-left: 1rem; }
+        .resume-content .formatted-list li { margin: 0.125rem 0; }
+        .resume-content .formatted-list p { margin: 0; display: inline; }
       `}</style>
       
       <div id="resume-preview" className="p-8 font-serif text-sm leading-relaxed resume-content" style={{ fontFamily: 'Georgia, serif' }}>

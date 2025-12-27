@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Resume } from '@/types/resume';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from 'lucide-react';
+import { ZoomIn, ZoomOut } from 'lucide-react';
 
 interface PaginatedPreviewProps {
   resume: Resume;
@@ -43,34 +43,33 @@ const RenderHtml = ({ html, className }: { html: string; className?: string }) =
   );
 };
 
+// A4 dimensions in pixels at 96 DPI
+const PAGE_HEIGHT = 1122; // ~297mm
+const PAGE_WIDTH = 794; // ~210mm
+const PADDING = 40; // Page padding
+
 export function PaginatedPreview({ resume, showHeatmap = false, className }: PaginatedPreviewProps) {
   const { contact, summary, experiences, education, skills, certifications, customSections = [] } = resume;
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [zoom, setZoom] = useState(0.75);
+  const [zoom, setZoom] = useState(0.7);
   const contentRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // A4 dimensions in pixels at 96 DPI
-  const PAGE_HEIGHT = 1122; // ~297mm
-  const PAGE_WIDTH = 794; // ~210mm
-
-  useEffect(() => {
+  // Calculate total pages based on content height
+  const calculatePages = useCallback(() => {
     if (contentRef.current) {
       const contentHeight = contentRef.current.scrollHeight;
-      const pages = Math.ceil(contentHeight / PAGE_HEIGHT);
+      const usableHeight = PAGE_HEIGHT - (PADDING * 2);
+      const pages = Math.ceil(contentHeight / usableHeight);
       setTotalPages(Math.max(1, pages));
-      if (currentPage > pages) {
-        setCurrentPage(Math.max(1, pages));
-      }
     }
-  }, [resume, currentPage]);
+  }, []);
 
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
+  useEffect(() => {
+    calculatePages();
+    // Recalculate on window resize
+    window.addEventListener('resize', calculatePages);
+    return () => window.removeEventListener('resize', calculatePages);
+  }, [resume, calculatePages]);
 
   // Get ordered sections
   const allSections = [
@@ -262,15 +261,36 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
     }
   };
 
+  // Render content for a specific page
+  const renderPageContent = (pageIndex: number) => {
+    const usableHeight = PAGE_HEIGHT - (PADDING * 2);
+    const offsetY = pageIndex * usableHeight;
+
+    return (
+      <div
+        className="absolute top-0 left-0"
+        style={{
+          width: PAGE_WIDTH - (PADDING * 2),
+          clipPath: `inset(${offsetY}px 0 0 0)`,
+          transform: `translateY(-${offsetY}px)`,
+        }}
+      >
+        {allSections.filter(s => s.visible).map((section) => 
+          renderSection(section.type, section.id)
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className={cn("flex flex-col items-center", className)}>
       {/* Controls */}
-      <div className="flex items-center gap-4 mb-6 bg-muted/50 rounded-lg px-4 py-2">
+      <div className="sticky top-0 z-10 flex items-center gap-4 mb-6 bg-muted/80 backdrop-blur rounded-lg px-4 py-2">
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
+            onClick={() => setZoom(Math.max(0.4, zoom - 0.1))}
             className="h-8 w-8"
           >
             <ZoomOut className="h-4 w-4" />
@@ -279,7 +299,7 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setZoom(Math.min(1.5, zoom + 0.1))}
+            onClick={() => setZoom(Math.min(1.2, zoom + 0.1))}
             className="h-8 w-8"
           >
             <ZoomIn className="h-4 w-4" />
@@ -288,107 +308,82 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
         
         <div className="h-6 w-px bg-border" />
         
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage <= 1}
-            className="h-8 w-8"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="text-sm">
-            Page {currentPage} of {totalPages}
-          </span>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage >= totalPages}
-            className="h-8 w-8"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
+        <span className="text-sm text-muted-foreground">
+          {totalPages} {totalPages === 1 ? 'page' : 'pages'}
+        </span>
       </div>
 
-      {/* Page Container */}
+      {/* Scrollable Pages Container */}
       <div 
-        ref={containerRef}
-        className="relative overflow-hidden bg-muted/30 rounded-lg p-8"
+        className="relative overflow-auto bg-muted/30 rounded-lg p-8"
         style={{ 
-          maxHeight: '80vh',
-          overflowY: 'auto'
+          maxHeight: 'calc(100vh - 200px)',
         }}
       >
-        {/* Shadow/Depth effect */}
+        {/* Hidden content for measurement */}
         <div 
-          className="relative bg-white shadow-2xl"
-          style={{
-            width: PAGE_WIDTH * zoom,
-            minHeight: PAGE_HEIGHT * zoom,
-            transform: `scale(1)`,
-            transformOrigin: 'top center',
+          ref={contentRef}
+          className="absolute opacity-0 pointer-events-none"
+          style={{ 
+            width: PAGE_WIDTH - (PADDING * 2),
+            padding: `${PADDING}px`,
           }}
         >
-          {/* Page content with clipping for current page view */}
-          <div
-            className="absolute inset-0 overflow-hidden"
-            style={{
-              height: PAGE_HEIGHT * zoom,
-            }}
-          >
+          {allSections.filter(s => s.visible).map((section) => 
+            renderSection(section.type, section.id)
+          )}
+        </div>
+
+        {/* Stacked Pages View */}
+        <div className="flex flex-col gap-6 items-center">
+          {Array.from({ length: totalPages }, (_, pageIndex) => (
             <div
-              ref={contentRef}
-              id="resume-preview"
-              className="resume-content font-serif text-sm leading-relaxed"
-              style={{ 
-                fontFamily: 'Georgia, serif',
-                padding: '32px',
-                width: PAGE_WIDTH,
-                transform: `scale(${zoom})`,
-                transformOrigin: 'top left',
-                marginTop: -(currentPage - 1) * PAGE_HEIGHT,
+              key={pageIndex}
+              className="relative bg-white shadow-2xl rounded-sm"
+              style={{
+                width: PAGE_WIDTH * zoom,
+                height: PAGE_HEIGHT * zoom,
+                transformOrigin: 'top center',
               }}
             >
-              {/* Styles for formatted content */}
-              <style>{`
-                .resume-content strong, .resume-content b { font-weight: bold; }
-                .resume-content em, .resume-content i { font-style: italic; }
-                .resume-content u { text-decoration: underline; }
-                .resume-content s { text-decoration: line-through; }
-                .resume-content a { color: inherit; text-decoration: underline; }
-                .resume-content .formatted-list ul { list-style-type: disc; margin-left: 1rem; }
-                .resume-content .formatted-list ol { list-style-type: decimal; margin-left: 1rem; }
-                .resume-content .formatted-list li { margin: 0.125rem 0; }
-                .resume-content .formatted-list p { margin: 0; display: inline; }
-              `}</style>
+              {/* Page number badge */}
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded-full">
+                Page {pageIndex + 1}
+              </div>
+              
+              {/* Page content */}
+              <div
+                id={pageIndex === 0 ? "resume-preview" : undefined}
+                className="resume-content font-serif text-sm leading-relaxed overflow-hidden"
+                style={{ 
+                  fontFamily: 'Georgia, serif',
+                  padding: `${PADDING}px`,
+                  width: PAGE_WIDTH,
+                  height: PAGE_HEIGHT,
+                  transform: `scale(${zoom})`,
+                  transformOrigin: 'top left',
+                  position: 'relative',
+                }}
+              >
+                {/* Styles for formatted content */}
+                <style>{`
+                  .resume-content strong, .resume-content b { font-weight: bold; }
+                  .resume-content em, .resume-content i { font-style: italic; }
+                  .resume-content u { text-decoration: underline; }
+                  .resume-content s { text-decoration: line-through; }
+                  .resume-content a { color: inherit; text-decoration: underline; }
+                  .resume-content .formatted-list ul { list-style-type: disc; margin-left: 1rem; }
+                  .resume-content .formatted-list ol { list-style-type: decimal; margin-left: 1rem; }
+                  .resume-content .formatted-list li { margin: 0.125rem 0; }
+                  .resume-content .formatted-list p { margin: 0; display: inline; }
+                `}</style>
 
-              {/* Render sections in order */}
-              {allSections.filter(s => s.visible).map((section) => 
-                renderSection(section.type, section.id)
-              )}
+                {renderPageContent(pageIndex)}
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Page indicators */}
-      {totalPages > 1 && (
-        <div className="flex gap-2 mt-4">
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i}
-              onClick={() => goToPage(i + 1)}
-              className={cn(
-                "w-2 h-2 rounded-full transition-colors",
-                currentPage === i + 1 ? "bg-primary" : "bg-muted-foreground/30"
-              )}
-            />
           ))}
         </div>
-      )}
+      </div>
     </div>
   );
 }

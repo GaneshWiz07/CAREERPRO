@@ -223,7 +223,7 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
                 <div className="flex justify-between items-start">
                   <div className="flex items-baseline gap-4 flex-1">
                     <h3 className="text-xs font-bold text-foreground uppercase">{item.title}</h3>
-                    {item.technologies && (
+                    {section.showTechnologies && item.technologies && (
                       <span className="text-xs text-muted-foreground italic">{item.technologies}</span>
                     )}
                   </div>

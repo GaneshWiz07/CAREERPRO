@@ -59,6 +59,7 @@ export interface CustomSection {
   items: CustomSectionItem[];
   order: number;
   visible: boolean;
+  showTechnologies?: boolean;
 }
 
 export interface ResumeSection {

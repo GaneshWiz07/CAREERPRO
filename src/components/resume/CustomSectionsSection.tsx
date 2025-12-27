@@ -104,7 +104,16 @@ export function CustomSectionsSection() {
                 placeholder="Section Title"
               />
             </CardTitle>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
+              <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                <input
+                  type="checkbox"
+                  checked={section.showTechnologies ?? false}
+                  onChange={e => updateCustomSection(section.id, { showTechnologies: e.target.checked })}
+                  className="rounded border-input"
+                />
+                Show Technologies
+              </label>
               <Button
                 variant="outline"
                 size="sm"
@@ -143,7 +152,7 @@ export function CustomSectionsSection() {
                             <h4 className="font-medium">
                               {item.title || 'Untitled Item'}
                             </h4>
-                            {item.technologies && (
+                            {section.showTechnologies && item.technologies && (
                               <span className="text-sm text-muted-foreground italic">
                                 {item.technologies}
                               </span>
@@ -171,7 +180,7 @@ export function CustomSectionsSection() {
                       </div>
                     </CollapsibleTrigger>
                     <CollapsibleContent className="pt-4 space-y-4">
-                      <div className="grid grid-cols-3 gap-4">
+                      <div className={`grid gap-4 ${section.showTechnologies ? 'grid-cols-3' : 'grid-cols-2'}`}>
                         <div className="space-y-2">
                           <Label>Title</Label>
                           <Input
@@ -181,21 +190,23 @@ export function CustomSectionsSection() {
                                 title: e.target.value,
                               })
                             }
-                            placeholder="Project name"
+                            placeholder="Item name"
                           />
                         </div>
-                        <div className="space-y-2">
-                          <Label>Technologies</Label>
-                          <Input
-                            value={item.technologies}
-                            onChange={e =>
-                              updateCustomSectionItem(section.id, item.id, {
-                                technologies: e.target.value,
-                              })
-                            }
-                            placeholder="React, Node.js, MongoDB"
-                          />
-                        </div>
+                        {section.showTechnologies && (
+                          <div className="space-y-2">
+                            <Label>Technologies</Label>
+                            <Input
+                              value={item.technologies}
+                              onChange={e =>
+                                updateCustomSectionItem(section.id, item.id, {
+                                  technologies: e.target.value,
+                                })
+                              }
+                              placeholder="React, Node.js, MongoDB"
+                            />
+                          </div>
+                        )}
                         <div className="space-y-2">
                           <Label>Date</Label>
                           <Input

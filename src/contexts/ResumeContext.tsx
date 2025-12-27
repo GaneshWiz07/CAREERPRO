@@ -317,7 +317,7 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const importResumeData = (data: ImportedResumeData) => {
-    // Convert imported data to resume format
+    // Clear previous data and convert imported data to resume format
     const importedExperiences = (data.experience || []).map(exp => ({
       id: exp.id || crypto.randomUUID(),
       company: exp.company || '',
@@ -386,6 +386,7 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
       })),
     ];
 
+    // Always clear previous data and replace with imported data (use empty arrays if nothing imported)
     updateResume({
       contact: {
         fullName: data.contact?.fullName || '',
@@ -396,10 +397,10 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
         website: data.contact?.website || '',
       },
       summary: data.summary || '',
-      experiences: importedExperiences.length > 0 ? importedExperiences : resume.experiences,
-      education: importedEducation.length > 0 ? importedEducation : resume.education,
-      skills: importedSkills.length > 0 ? importedSkills : resume.skills,
-      certifications: importedCertifications.length > 0 ? importedCertifications : resume.certifications,
+      experiences: importedExperiences,
+      education: importedEducation,
+      skills: importedSkills,
+      certifications: importedCertifications,
       customSections: importedCustomSections,
       sections: updatedSections,
     });

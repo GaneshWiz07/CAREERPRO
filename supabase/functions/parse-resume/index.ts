@@ -101,10 +101,9 @@ Return ONLY valid JSON in this exact format:
       "type": "custom",
       "items": [
         {
-          "title": "string",
-          "subtitle": "string",
-          "description": "string",
-          "bullets": ["string"]
+          "title": "string (project name or item title)",
+          "technologies": "string (comma-separated list of technologies, tools, or frameworks used, e.g., 'React, Node.js, MongoDB')",
+          "bullets": ["string (key points, features, or achievements)"]
         }
       ]
     }

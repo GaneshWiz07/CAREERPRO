@@ -47,8 +47,7 @@ export interface Certification {
 export interface CustomSectionItem {
   id: string;
   title: string;
-  subtitle: string;
-  description: string;
+  technologies: string;
   bullets: string[];
 }
 

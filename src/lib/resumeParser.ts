@@ -1,8 +1,9 @@
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 
-// Disable worker to avoid CORS/loading issues in browser
-pdfjsLib.GlobalWorkerOptions.workerSrc = '';
+// Use the CDN worker for pdfjs-dist
+const PDFJS_VERSION = '4.4.168';
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.worker.min.mjs`;
 
 interface ParsedResume {
   contact: {
@@ -301,48 +302,55 @@ function extractCertifications(text: string): ParsedResume['certifications'] {
 }
 
 export async function parsePDF(file: File): Promise<ParsedResume> {
-  const arrayBuffer = await file.arrayBuffer();
-  
-  // Use disableWorker option for browser compatibility
-  const loadingTask = pdfjsLib.getDocument({ 
-    data: arrayBuffer,
-    useWorkerFetch: false,
-    isEvalSupported: false,
-    useSystemFonts: true,
-  });
-  
-  const pdf = await loadingTask.promise;
-  
-  let fullText = '';
-  let detectedFont = '';
-  
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const textContent = await page.getTextContent();
+  try {
+    const arrayBuffer = await file.arrayBuffer();
     
-    // Try to detect font from first page
-    if (i === 1 && textContent.items.length > 0) {
-      const firstItem = textContent.items[0] as any;
-      if (firstItem.fontName) {
-        detectedFont = firstItem.fontName.replace(/^[A-Z]{6}\+/, '');
+    console.log('Loading PDF document...');
+    const loadingTask = pdfjsLib.getDocument({ 
+      data: arrayBuffer,
+    });
+    
+    const pdf = await loadingTask.promise;
+    console.log('PDF loaded, pages:', pdf.numPages);
+    
+    let fullText = '';
+    let detectedFont = '';
+    
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      
+      // Try to detect font from first page
+      if (i === 1 && textContent.items.length > 0) {
+        const firstItem = textContent.items[0] as any;
+        if (firstItem.fontName) {
+          detectedFont = firstItem.fontName.replace(/^[A-Z]{6}\+/, '');
+        }
       }
+      
+      // Better text extraction - preserve structure
+      const pageText = textContent.items
+        .map((item: any) => {
+          if (item.hasEOL) {
+            return item.str + '\n';
+          }
+          return item.str + ' ';
+        })
+        .join('');
+      fullText += pageText + '\n';
     }
     
-    // Better text extraction - preserve structure
-    const pageText = textContent.items
-      .map((item: any) => {
-        if (item.hasEOL) {
-          return item.str + '\n';
-        }
-        return item.str + ' ';
-      })
-      .join('');
-    fullText += pageText + '\n';
+    console.log('Extracted PDF text (first 500 chars):', fullText.substring(0, 500));
+    
+    if (!fullText.trim()) {
+      throw new Error('No text could be extracted from this PDF. It may be scanned or image-based.');
+    }
+    
+    return parseResumeText(fullText, detectedFont);
+  } catch (error: any) {
+    console.error('PDF parsing error:', error);
+    throw new Error(`Failed to parse PDF: ${error.message || 'Unknown error'}`);
   }
-  
-  console.log('Extracted PDF text:', fullText.substring(0, 500));
-  
-  return parseResumeText(fullText, detectedFont);
 }
 
 export async function parseWord(file: File): Promise<ParsedResume> {

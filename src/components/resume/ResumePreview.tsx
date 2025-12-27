@@ -8,18 +8,27 @@ interface ResumePreviewProps {
   className?: string;
 }
 
-// Helper to strip HTML tags and get plain text
-const stripHtml = (html: string): string => {
-  if (!html) return '';
-  // Remove HTML tags and decode entities
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  return doc.body.textContent || '';
-};
-
 // Check if content is empty (handles both plain text and HTML)
 const isEmptyContent = (content: string): boolean => {
-  const stripped = stripHtml(content).trim();
+  if (!content) return true;
+  const stripped = content.replace(/<[^>]*>/g, '').trim();
   return !stripped || stripped === '';
+};
+
+// Render HTML content inline without block elements
+const RenderHtml = ({ html, className }: { html: string; className?: string }) => {
+  // Convert block elements to inline for proper bullet rendering
+  const inlineHtml = html
+    .replace(/<p>/g, '')
+    .replace(/<\/p>/g, '')
+    .replace(/<br\s*\/?>/g, ' ');
+  
+  return (
+    <span 
+      className={className}
+      dangerouslySetInnerHTML={{ __html: inlineHtml }}
+    />
+  );
 };
 
 export function ResumePreview({ resume, showHeatmap = false, className }: ResumePreviewProps) {
@@ -42,13 +51,20 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
     );
   };
 
-  const summaryText = stripHtml(summary);
-
   return (
     <div className={cn("relative bg-card border border-border rounded-lg shadow-sm", className)}>
       {getHeatmapOverlay()}
       
-      <div id="resume-preview" className="p-8 font-serif text-sm leading-relaxed" style={{ fontFamily: 'Georgia, serif' }}>
+      {/* Add styles for formatted content */}
+      <style>{`
+        .resume-content strong, .resume-content b { font-weight: bold; }
+        .resume-content em, .resume-content i { font-style: italic; }
+        .resume-content u { text-decoration: underline; }
+        .resume-content s { text-decoration: line-through; }
+        .resume-content a { color: inherit; text-decoration: underline; }
+      `}</style>
+      
+      <div id="resume-preview" className="p-8 font-serif text-sm leading-relaxed resume-content" style={{ fontFamily: 'Georgia, serif' }}>
         {/* Header / Contact */}
         <header className="text-center border-b border-border pb-4 mb-4">
           <h1 className="text-2xl font-bold text-foreground mb-1">
@@ -66,12 +82,14 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
         </header>
 
         {/* Summary */}
-        {summaryText && (
+        {!isEmptyContent(summary) && (
           <section className="mb-4">
             <h2 className="text-sm font-bold uppercase tracking-wide text-foreground border-b border-border pb-1 mb-2">
               Professional Summary
             </h2>
-            <p className="text-xs text-foreground leading-relaxed">{summaryText}</p>
+            <div className="text-xs text-foreground leading-relaxed">
+              <RenderHtml html={summary} />
+            </div>
           </section>
         )}
 
@@ -97,7 +115,7 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
                     {exp.bullets.filter(b => !isEmptyContent(b)).map((bullet, idx) => (
                       <li key={idx} className="text-xs text-foreground flex">
                         <span className="mr-2">•</span>
-                        <span>{stripHtml(bullet)}</span>
+                        <RenderHtml html={bullet} />
                       </li>
                     ))}
                   </ul>
@@ -201,7 +219,7 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
                     {item.bullets.filter(b => !isEmptyContent(b)).map((bullet, idx) => (
                       <li key={idx} className="text-xs text-foreground flex">
                         <span className="mr-2">•</span>
-                        <span>{stripHtml(bullet)}</span>
+                        <RenderHtml html={bullet} />
                       </li>
                     ))}
                   </ul>

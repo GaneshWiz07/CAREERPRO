@@ -55,6 +55,7 @@ interface ParsedResume {
     items: Array<{
       title: string;
       technologies: string;
+      date: string;
       bullets: string[];
     }>;
   }>;
@@ -134,6 +135,7 @@ async function parseWithGroq(text: string): Promise<ParsedResume> {
       items: (section.items || []).map((item: any) => ({
         title: item.title || '',
         technologies: item.technologies || '',
+        date: item.date || '',
         bullets: item.bullets || [],
       })),
     })),

@@ -48,6 +48,7 @@ export interface CustomSectionItem {
   id: string;
   title: string;
   technologies: string;
+  date: string;
   bullets: string[];
 }
 

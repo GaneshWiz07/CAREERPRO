@@ -25,21 +25,13 @@ import {
 import { 
   Save, 
   Download, 
-  FileText, 
   Eye, 
   Edit3,
   Loader2,
-  FileDown,
   Upload
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
-import { exportToPDF, downloadAsWord } from '@/lib/export';
+import { exportToPDF } from '@/lib/export';
 import { parseResume } from '@/lib/resumeParser';
 
 export default function EditorPage() {
@@ -48,7 +40,6 @@ export default function EditorPage() {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
-  const [exportType, setExportType] = useState<'pdf' | 'word'>('pdf');
   const [exportFilename, setExportFilename] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -57,31 +48,24 @@ export default function EditorPage() {
     toast.success('Resume saved!');
   };
 
-  const openExportDialog = (type: 'pdf' | 'word') => {
-    setExportType(type);
+  const openExportDialog = () => {
     setExportFilename(resume.contact.fullName || 'resume');
     setExportDialogOpen(true);
   };
 
   const handleExport = async () => {
     setExportDialogOpen(false);
-    
-    if (exportType === 'pdf') {
-      setActiveTab('preview');
-      setIsExporting(true);
-      try {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        await exportToPDF(resume, exportFilename);
-        toast.success('PDF downloaded!');
-      } catch (error) {
-        console.error('Export error:', error);
-        toast.error('Failed to export PDF');
-      } finally {
-        setIsExporting(false);
-      }
-    } else {
-      downloadAsWord(resume, exportFilename);
-      toast.success('Word document downloaded!');
+    setActiveTab('preview');
+    setIsExporting(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await exportToPDF(resume, exportFilename);
+      toast.success('PDF downloaded!');
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export PDF');
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -172,28 +156,19 @@ export default function EditorPage() {
                 )}
                 Import
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2" disabled={isExporting}>
-                    {isExporting ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Download className="h-4 w-4" />
-                    )}
-                    Export
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => openExportDialog('pdf')}>
-                    <FileDown className="h-4 w-4 mr-2" />
-                    Download PDF
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => openExportDialog('word')}>
-                    <FileText className="h-4 w-4 mr-2" />
-                    Download Word
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Button 
+                variant="outline" 
+                className="gap-2" 
+                disabled={isExporting}
+                onClick={openExportDialog}
+              >
+                {isExporting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
+                Export PDF
+              </Button>
               <Button onClick={handleSave} className="gap-2">
                 <Save className="h-4 w-4" />
                 Save
@@ -241,7 +216,7 @@ export default function EditorPage() {
             <DialogHeader>
               <DialogTitle>Export Resume</DialogTitle>
               <DialogDescription>
-                Enter a filename for your {exportType === 'pdf' ? 'PDF' : 'Word'} document.
+                Enter a filename for your PDF document.
               </DialogDescription>
             </DialogHeader>
             <div className="py-4">
@@ -253,9 +228,7 @@ export default function EditorPage() {
                   onChange={(e) => setExportFilename(e.target.value)}
                   placeholder="Enter filename"
                 />
-                <span className="text-muted-foreground">
-                  .{exportType === 'pdf' ? 'pdf' : 'doc'}
-                </span>
+                <span className="text-muted-foreground">.pdf</span>
               </div>
             </div>
             <DialogFooter>

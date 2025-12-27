@@ -3,34 +3,150 @@ import html2canvas from 'html2canvas';
 import { Resume } from '@/types/resume';
 
 export async function exportToPDF(resume: Resume, filename?: string): Promise<void> {
-  const element = document.getElementById('resume-preview');
-  if (!element) {
-    throw new Error('Resume preview element not found');
-  }
-
-  const canvas = await html2canvas(element, {
-    scale: 2,
-    useCORS: true,
-    logging: false,
-    backgroundColor: '#ffffff',
-  });
-
-  const imgData = canvas.toDataURL('image/png');
   const pdf = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
     format: 'a4',
   });
 
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = pdf.internal.pageSize.getHeight();
-  const imgWidth = canvas.width;
-  const imgHeight = canvas.height;
-  const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-  const imgX = (pdfWidth - imgWidth * ratio) / 2;
-  const imgY = 0;
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const margin = 20;
+  const contentWidth = pageWidth - margin * 2;
+  let y = margin;
 
-  pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+  // Helper to add text with word wrap
+  const addText = (text: string, fontSize: number, isBold = false, color = '#000000') => {
+    pdf.setFontSize(fontSize);
+    pdf.setFont('helvetica', isBold ? 'bold' : 'normal');
+    pdf.setTextColor(color);
+    const lines = pdf.splitTextToSize(text, contentWidth);
+    pdf.text(lines, margin, y);
+    y += lines.length * (fontSize * 0.4) + 2;
+  };
+
+  const addLine = () => {
+    pdf.setDrawColor(200, 200, 200);
+    pdf.line(margin, y, pageWidth - margin, y);
+    y += 4;
+  };
+
+  const checkPageBreak = (neededSpace: number) => {
+    if (y + neededSpace > pdf.internal.pageSize.getHeight() - margin) {
+      pdf.addPage();
+      y = margin;
+    }
+  };
+
+  // Contact Header
+  if (resume.contact.fullName) {
+    addText(resume.contact.fullName, 18, true);
+  }
+  
+  const contactParts = [
+    resume.contact.email,
+    resume.contact.phone,
+    resume.contact.location
+  ].filter(Boolean);
+  
+  if (contactParts.length > 0) {
+    addText(contactParts.join(' | '), 10, false, '#555555');
+  }
+  
+  const linkParts = [resume.contact.linkedin, resume.contact.website].filter(Boolean);
+  if (linkParts.length > 0) {
+    addText(linkParts.join(' | '), 9, false, '#0066cc');
+  }
+  
+  y += 4;
+
+  // Summary
+  if (resume.summary) {
+    checkPageBreak(20);
+    addText('PROFESSIONAL SUMMARY', 12, true);
+    addLine();
+    addText(resume.summary, 10);
+    y += 4;
+  }
+
+  // Experience
+  if (resume.experiences.length > 0) {
+    checkPageBreak(20);
+    addText('WORK EXPERIENCE', 12, true);
+    addLine();
+    
+    resume.experiences.forEach((exp, index) => {
+      checkPageBreak(30);
+      if (exp.title || exp.company) {
+        addText(`${exp.title}${exp.title && exp.company ? ' | ' : ''}${exp.company}`, 11, true);
+      }
+      
+      const dateLocation = [
+        exp.startDate && exp.endDate ? `${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}` : '',
+        exp.location
+      ].filter(Boolean).join(' | ');
+      
+      if (dateLocation) {
+        addText(dateLocation, 9, false, '#666666');
+      }
+      
+      exp.bullets.filter(b => b.trim()).forEach(bullet => {
+        checkPageBreak(10);
+        addText(`• ${bullet}`, 10);
+      });
+      
+      if (index < resume.experiences.length - 1) y += 4;
+    });
+    y += 4;
+  }
+
+  // Education
+  if (resume.education.length > 0) {
+    checkPageBreak(20);
+    addText('EDUCATION', 12, true);
+    addLine();
+    
+    resume.education.forEach((edu, index) => {
+      checkPageBreak(20);
+      const degreeLine = `${edu.degree}${edu.field ? ` in ${edu.field}` : ''}`;
+      if (degreeLine.trim()) addText(degreeLine, 11, true);
+      
+      const schoolLine = `${edu.institution}${edu.location ? `, ${edu.location}` : ''}${edu.graduationDate ? ` | ${edu.graduationDate}` : ''}`;
+      if (schoolLine.trim()) addText(schoolLine, 10);
+      
+      if (edu.gpa) addText(`GPA: ${edu.gpa}`, 9, false, '#666666');
+      if (edu.honors) addText(edu.honors, 9);
+      
+      if (index < resume.education.length - 1) y += 2;
+    });
+    y += 4;
+  }
+
+  // Skills
+  if (resume.skills.length > 0) {
+    checkPageBreak(20);
+    addText('SKILLS', 12, true);
+    addLine();
+    
+    const skillNames = resume.skills.map(s => s.name).filter(Boolean);
+    if (skillNames.length > 0) {
+      addText(skillNames.join(', '), 10);
+    }
+    y += 4;
+  }
+
+  // Certifications
+  if (resume.certifications.length > 0) {
+    checkPageBreak(20);
+    addText('CERTIFICATIONS', 12, true);
+    addLine();
+    
+    resume.certifications.forEach(cert => {
+      checkPageBreak(10);
+      const certLine = [cert.name, cert.issuer, cert.date].filter(Boolean).join(' - ');
+      if (certLine) addText(certLine, 10);
+    });
+  }
+
   const exportFilename = filename || resume.contact.fullName || 'resume';
   pdf.save(`${exportFilename}.pdf`);
 }

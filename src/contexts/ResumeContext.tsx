@@ -89,9 +89,9 @@ interface ImportedResumeData {
     id?: string;
     school: string;
     degree: string;
-    field: string;
     location?: string;
-    graduationDate: string;
+    batchStart: string;
+    batchEnd: string;
     gpa: string;
     honors?: string;
   }>;
@@ -334,8 +334,8 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
       institution: edu.school || '',
       degree: edu.degree || '',
       location: edu.location || '',
-      batchStart: edu.graduationDate?.split('-')[0]?.trim() || edu.graduationDate?.split('–')[0]?.trim() || '',
-      batchEnd: edu.graduationDate?.split('-')[1]?.trim() || edu.graduationDate?.split('–')[1]?.trim() || edu.graduationDate || '',
+      batchStart: edu.batchStart || '',
+      batchEnd: edu.batchEnd || '',
       gpa: edu.gpa || '',
       honors: edu.honors || '',
     }));

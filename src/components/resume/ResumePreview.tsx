@@ -123,7 +123,7 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
                     <h3 className="text-xs font-bold text-foreground">{exp.title || 'Position'}</h3>
                     <p className="text-xs text-muted-foreground">{exp.company}{exp.location && `, ${exp.location}`}</p>
                   </div>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">
+                  <span className="text-xs text-muted-foreground whitespace-nowrap font-bold">
                     {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
                   </span>
                 </div>
@@ -157,7 +157,7 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
                     </h3>
                     <p className="text-xs text-muted-foreground">{edu.institution}{edu.location && `, ${edu.location}`}</p>
                   </div>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs text-muted-foreground font-bold">
                     {edu.batchStart && edu.batchEnd ? `${edu.batchStart} - ${edu.batchEnd}` : edu.batchStart || edu.batchEnd}
                   </span>
                 </div>
@@ -228,7 +228,7 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
                     )}
                   </div>
                   {item.date && (
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">{item.date}</span>
+                    <span className="text-xs text-muted-foreground whitespace-nowrap font-bold">{item.date}</span>
                   )}
                 </div>
                 {item.bullets.filter(b => !isEmptyContent(b)).length > 0 && (

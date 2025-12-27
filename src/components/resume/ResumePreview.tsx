@@ -55,7 +55,10 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
             <h2 className="text-sm font-bold uppercase tracking-wide text-foreground border-b border-border pb-1 mb-2">
               Professional Summary
             </h2>
-            <p className="text-xs text-foreground">{summary}</p>
+            <div 
+              className="text-xs text-foreground prose prose-xs max-w-none prose-p:my-0 prose-strong:font-bold prose-em:italic"
+              dangerouslySetInnerHTML={{ __html: summary }}
+            />
           </section>
         )}
 
@@ -76,12 +79,15 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
                     {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
                   </span>
                 </div>
-                {exp.bullets.filter(b => b.trim()).length > 0 && (
+                {exp.bullets.filter(b => b.trim() && b !== '<p></p>').length > 0 && (
                   <ul className="mt-1 space-y-0.5">
-                    {exp.bullets.filter(b => b.trim()).map((bullet, idx) => (
+                    {exp.bullets.filter(b => b.trim() && b !== '<p></p>').map((bullet, idx) => (
                       <li key={idx} className="text-xs text-foreground flex">
                         <span className="mr-2">•</span>
-                        <span>{bullet}</span>
+                        <span 
+                          className="prose prose-xs max-w-none prose-p:my-0 prose-p:inline"
+                          dangerouslySetInnerHTML={{ __html: bullet }}
+                        />
                       </li>
                     ))}
                   </ul>
@@ -180,12 +186,15 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
                     <span className="text-xs text-muted-foreground whitespace-nowrap">{item.date}</span>
                   )}
                 </div>
-                {item.bullets.length > 0 && (
+                {item.bullets.filter(b => b.trim() && b !== '<p></p>').length > 0 && (
                   <ul className="mt-1 space-y-0.5">
-                    {item.bullets.filter(b => b.trim()).map((bullet, idx) => (
+                    {item.bullets.filter(b => b.trim() && b !== '<p></p>').map((bullet, idx) => (
                       <li key={idx} className="text-xs text-foreground flex">
                         <span className="mr-2">•</span>
-                        <span>{bullet}</span>
+                        <span 
+                          className="prose prose-xs max-w-none prose-p:my-0 prose-p:inline"
+                          dangerouslySetInnerHTML={{ __html: bullet }}
+                        />
                       </li>
                     ))}
                   </ul>

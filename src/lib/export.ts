@@ -21,8 +21,8 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
   if (previewElement) {
     // Clone the element to avoid modifying the original
     const clone = previewElement.cloneNode(true) as HTMLElement;
-    clone.style.width = '210mm';
-    clone.style.padding = '15mm';
+    clone.style.width = '180mm'; // Content width (A4 width minus margins)
+    clone.style.padding = '0';
     clone.style.backgroundColor = 'white';
     clone.style.color = 'black';
     clone.style.position = 'absolute';
@@ -45,7 +45,6 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
         backgroundColor: '#ffffff',
       });
       
-      const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
@@ -54,20 +53,48 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
       
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = pageWidth;
+      const margin = 15; // 15mm margin on all sides
+      const contentWidth = pageWidth - (margin * 2);
+      const contentHeight = pageHeight - (margin * 2);
+      
+      // Calculate scaled dimensions
+      const imgWidth = contentWidth;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
-      let heightLeft = imgHeight;
-      let position = 0;
+      // Calculate how many pages we need
+      const totalPages = Math.ceil(imgHeight / contentHeight);
       
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-      
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+      for (let page = 0; page < totalPages; page++) {
+        if (page > 0) {
+          pdf.addPage();
+        }
+        
+        // Calculate the portion of the image to show on this page
+        const sourceY = page * (canvas.height / totalPages) * (contentHeight / imgHeight) * (canvas.height / imgHeight);
+        const sourceHeight = (contentHeight / imgHeight) * canvas.height;
+        
+        // Create a temporary canvas for this page's content
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = Math.min(sourceHeight, canvas.height - (page * sourceHeight));
+        
+        const ctx = pageCanvas.getContext('2d');
+        if (ctx) {
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+          ctx.drawImage(
+            canvas,
+            0, page * sourceHeight, // source x, y
+            canvas.width, pageCanvas.height, // source width, height
+            0, 0, // destination x, y
+            pageCanvas.width, pageCanvas.height // destination width, height
+          );
+        }
+        
+        const pageImgData = pageCanvas.toDataURL('image/png');
+        const pageImgHeight = (pageCanvas.height * contentWidth) / pageCanvas.width;
+        
+        pdf.addImage(pageImgData, 'PNG', margin, margin, contentWidth, pageImgHeight);
       }
       
       const exportFilename = filename || resume.contact.fullName || 'resume';

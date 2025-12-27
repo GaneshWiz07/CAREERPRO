@@ -10,6 +10,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 
 export function EducationSection() {
   const { resume, addEducation, updateEducation, removeEducation } = useResume();
@@ -125,10 +126,11 @@ export function EducationSection() {
                       </div>
                       <div className="space-y-2">
                         <Label>Honors & Awards (Optional)</Label>
-                        <Input
-                          value={edu.honors || ''}
-                          onChange={(e) => updateEducation(edu.id, { honors: e.target.value })}
+                        <RichTextEditor
+                          content={edu.honors || ''}
+                          onChange={(value) => updateEducation(edu.id, { honors: value })}
                           placeholder="Magna Cum Laude, Dean's List"
+                          minHeight="60px"
                         />
                       </div>
                     </div>

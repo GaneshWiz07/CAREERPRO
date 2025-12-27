@@ -161,12 +161,12 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
                     {edu.batchStart && edu.batchEnd ? `${edu.batchStart} - ${edu.batchEnd}` : edu.batchStart || edu.batchEnd}
                   </span>
                 </div>
-                {(edu.gpa || edu.honors) && (
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {edu.gpa && `GPA: ${edu.gpa}`}
-                    {edu.gpa && edu.honors && ' | '}
-                    {edu.honors}
-                  </p>
+                {(edu.gpa || (edu.honors && !isEmptyContent(edu.honors))) && (
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    {edu.gpa && <span>GPA: {edu.gpa}</span>}
+                    {edu.gpa && edu.honors && !isEmptyContent(edu.honors) && <span> | </span>}
+                    {edu.honors && !isEmptyContent(edu.honors) && <RenderHtml html={edu.honors} />}
+                  </div>
                 )}
               </div>
             ))}
@@ -222,7 +222,7 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
               <div key={item.id} className="mb-2">
                 <div className="flex justify-between items-start">
                   <div className="flex items-baseline gap-4 flex-1">
-                    <h3 className="text-xs font-bold text-foreground uppercase">{item.title}</h3>
+                    <h3 className="text-xs font-bold text-foreground">{item.title}</h3>
                     {section.showTechnologies && item.technologies && (
                       <span className="text-xs text-muted-foreground italic">{item.technologies}</span>
                     )}

@@ -54,6 +54,7 @@ interface ResumeContextType {
   addCertification: () => void;
   updateCertification: (id: string, updates: Partial<Resume['certifications'][0]>) => void;
   removeCertification: (id: string) => void;
+  addCustomSection: () => void;
   reorderSections: (sections: Resume['sections']) => void;
   saveResume: () => void;
   loadResume: (id: string) => void;
@@ -269,6 +270,28 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
     updateResume({ sections });
   };
 
+  const addCustomSection = () => {
+    const allSections = [
+      ...resume.sections,
+      ...resume.customSections.map(cs => ({ id: cs.id, order: cs.order })),
+    ];
+    const maxOrder = Math.max(...allSections.map(s => s.order), 0);
+    
+    const newSection: CustomSection = {
+      id: crypto.randomUUID(),
+      title: 'New Section',
+      type: 'custom',
+      items: [],
+      order: maxOrder + 1,
+      visible: true,
+      showTechnologies: false,
+    };
+
+    updateResume({
+      customSections: [...resume.customSections, newSection],
+    });
+  };
+
   const saveResume = () => {
     setResumes(prev => {
       const exists = prev.find(r => r.id === resume.id);
@@ -429,6 +452,7 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
         addCertification,
         updateCertification,
         removeCertification,
+        addCustomSection,
         reorderSections,
         saveResume,
         loadResume,

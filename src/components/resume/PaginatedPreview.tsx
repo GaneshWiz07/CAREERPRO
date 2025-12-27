@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Resume } from '@/types/resume';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ZoomIn, ZoomOut } from 'lucide-react';
+import { ZoomIn, ZoomOut, Info } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface PaginatedPreviewProps {
   resume: Resume;
@@ -279,6 +280,15 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
 
   return (
     <div className={cn("flex flex-col items-center", className)}>
+      {/* Preview Notice */}
+      <Alert className="mb-4 max-w-xl border-primary/30 bg-primary/5">
+        <Info className="h-4 w-4 text-primary" />
+        <AlertDescription className="text-sm">
+          <strong>Preview Mode:</strong> This is a visual preview. The exported PDF uses optimized formatting 
+          for ATS compatibility and may have slight layout differences.
+        </AlertDescription>
+      </Alert>
+
       {/* Controls */}
       <div className="sticky top-0 z-10 flex items-center gap-4 mb-6 bg-muted/80 backdrop-blur rounded-lg px-4 py-2">
         <div className="flex items-center gap-2">

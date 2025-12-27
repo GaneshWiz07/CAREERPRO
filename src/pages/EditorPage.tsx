@@ -9,6 +9,7 @@ import { CertificationsSection } from '@/components/resume/CertificationsSection
 import { CustomSectionsSection } from '@/components/resume/CustomSectionsSection';
 import { SectionReorder } from '@/components/resume/SectionReorder';
 import { PaginatedPreview } from '@/components/resume/PaginatedPreview';
+import { TemplateSelector } from '@/components/resume/TemplateSelector';
 import { useResume } from '@/contexts/ResumeContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,15 +29,16 @@ import {
   Eye, 
   Edit3,
   Loader2,
-  Upload
+  Upload,
+  Palette
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { exportToPDF } from '@/lib/export';
 import { parseResume } from '@/lib/resumeParser';
 
 export default function EditorPage() {
-  const { resume, saveResume, importResumeData } = useResume();
-  const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
+  const { resume, updateResume, saveResume, importResumeData } = useResume();
+  const [activeTab, setActiveTab] = useState<'edit' | 'preview' | 'template'>('edit');
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
@@ -178,11 +180,15 @@ export default function EditorPage() {
         </header>
 
         <div className="p-6">
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'edit' | 'preview')}>
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'edit' | 'preview' | 'template')}>
             <TabsList className="mb-6">
               <TabsTrigger value="edit" className="gap-2">
                 <Edit3 className="h-4 w-4" />
                 Edit
+              </TabsTrigger>
+              <TabsTrigger value="template" className="gap-2">
+                <Palette className="h-4 w-4" />
+                Template
               </TabsTrigger>
               <TabsTrigger value="preview" className="gap-2">
                 <Eye className="h-4 w-4" />
@@ -202,6 +208,18 @@ export default function EditorPage() {
                 
                 {/* Custom sections */}
                 <CustomSectionsSection />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="template">
+              <div className="max-w-4xl mx-auto">
+                <TemplateSelector
+                  selectedTemplate={resume.templateId || 'classic'}
+                  onSelectTemplate={(templateId) => {
+                    updateResume({ templateId });
+                    toast.success('Template updated!');
+                  }}
+                />
               </div>
             </TabsContent>
 

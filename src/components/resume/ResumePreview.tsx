@@ -126,9 +126,21 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
             <h2 className="text-sm font-bold uppercase tracking-wide text-foreground border-b border-border pb-1 mb-2">
               Skills
             </h2>
-            <p className="text-xs text-foreground">
-              {skills.map(s => s.name).filter(Boolean).join(' • ')}
-            </p>
+            <div className="space-y-1">
+              {Object.entries(
+                skills.reduce((acc, skill) => {
+                  const category = skill.category || 'Other';
+                  if (!acc[category]) acc[category] = [];
+                  acc[category].push(skill.name);
+                  return acc;
+                }, {} as Record<string, string[]>)
+              ).map(([category, items]) => (
+                <p key={category} className="text-xs text-foreground">
+                  <span className="font-semibold">{category}:</span>{' '}
+                  {items.filter(Boolean).join(', ')}
+                </p>
+              ))}
+            </div>
           </section>
         )}
 

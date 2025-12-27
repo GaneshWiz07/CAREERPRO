@@ -8,6 +8,20 @@ interface ResumePreviewProps {
   className?: string;
 }
 
+// Helper to strip HTML tags and get plain text
+const stripHtml = (html: string): string => {
+  if (!html) return '';
+  // Remove HTML tags and decode entities
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || '';
+};
+
+// Check if content is empty (handles both plain text and HTML)
+const isEmptyContent = (content: string): boolean => {
+  const stripped = stripHtml(content).trim();
+  return !stripped || stripped === '';
+};
+
 export function ResumePreview({ resume, showHeatmap = false, className }: ResumePreviewProps) {
   const { contact, summary, experiences, education, skills, certifications, customSections = [] } = resume;
 
@@ -27,6 +41,8 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
       </div>
     );
   };
+
+  const summaryText = stripHtml(summary);
 
   return (
     <div className={cn("relative bg-card border border-border rounded-lg shadow-sm", className)}>
@@ -50,15 +66,12 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
         </header>
 
         {/* Summary */}
-        {summary && (
+        {summaryText && (
           <section className="mb-4">
             <h2 className="text-sm font-bold uppercase tracking-wide text-foreground border-b border-border pb-1 mb-2">
               Professional Summary
             </h2>
-            <div 
-              className="text-xs text-foreground prose prose-xs max-w-none prose-p:my-0 prose-strong:font-bold prose-em:italic"
-              dangerouslySetInnerHTML={{ __html: summary }}
-            />
+            <p className="text-xs text-foreground leading-relaxed">{summaryText}</p>
           </section>
         )}
 
@@ -79,15 +92,12 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
                     {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
                   </span>
                 </div>
-                {exp.bullets.filter(b => b.trim() && b !== '<p></p>').length > 0 && (
+                {exp.bullets.filter(b => !isEmptyContent(b)).length > 0 && (
                   <ul className="mt-1 space-y-0.5">
-                    {exp.bullets.filter(b => b.trim() && b !== '<p></p>').map((bullet, idx) => (
+                    {exp.bullets.filter(b => !isEmptyContent(b)).map((bullet, idx) => (
                       <li key={idx} className="text-xs text-foreground flex">
                         <span className="mr-2">•</span>
-                        <span 
-                          className="prose prose-xs max-w-none prose-p:my-0 prose-p:inline"
-                          dangerouslySetInnerHTML={{ __html: bullet }}
-                        />
+                        <span>{stripHtml(bullet)}</span>
                       </li>
                     ))}
                   </ul>
@@ -186,15 +196,12 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
                     <span className="text-xs text-muted-foreground whitespace-nowrap">{item.date}</span>
                   )}
                 </div>
-                {item.bullets.filter(b => b.trim() && b !== '<p></p>').length > 0 && (
+                {item.bullets.filter(b => !isEmptyContent(b)).length > 0 && (
                   <ul className="mt-1 space-y-0.5">
-                    {item.bullets.filter(b => b.trim() && b !== '<p></p>').map((bullet, idx) => (
+                    {item.bullets.filter(b => !isEmptyContent(b)).map((bullet, idx) => (
                       <li key={idx} className="text-xs text-foreground flex">
                         <span className="mr-2">•</span>
-                        <span 
-                          className="prose prose-xs max-w-none prose-p:my-0 prose-p:inline"
-                          dangerouslySetInnerHTML={{ __html: bullet }}
-                        />
+                        <span>{stripHtml(bullet)}</span>
                       </li>
                     ))}
                   </ul>

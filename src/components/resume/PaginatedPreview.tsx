@@ -47,29 +47,33 @@ const RenderHtml = ({ html, className }: { html: string; className?: string }) =
 const PAGE_HEIGHT = 1122; // ~297mm
 const PAGE_WIDTH = 794; // ~210mm
 const PADDING = 40; // Page padding
+const CONTENT_HEIGHT = PAGE_HEIGHT - (PADDING * 2); // Usable content height per page
 
 export function PaginatedPreview({ resume, showHeatmap = false, className }: PaginatedPreviewProps) {
   const { contact, summary, experiences, education, skills, certifications, customSections = [] } = resume;
   const [totalPages, setTotalPages] = useState(1);
   const [zoom, setZoom] = useState(0.7);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const measureRef = useRef<HTMLDivElement>(null);
 
   // Calculate total pages based on content height
   const calculatePages = useCallback(() => {
-    if (contentRef.current) {
-      const contentHeight = contentRef.current.scrollHeight;
-      const usableHeight = PAGE_HEIGHT - (PADDING * 2);
-      const pages = Math.ceil(contentHeight / usableHeight);
+    if (measureRef.current) {
+      const contentHeight = measureRef.current.scrollHeight;
+      const pages = Math.ceil(contentHeight / CONTENT_HEIGHT);
       setTotalPages(Math.max(1, pages));
     }
   }, []);
 
   useEffect(() => {
-    calculatePages();
-    // Recalculate on window resize
+    // Use setTimeout to ensure DOM is rendered before measuring
+    const timer = setTimeout(calculatePages, 100);
+    return () => clearTimeout(timer);
+  }, [resume, calculatePages]);
+
+  useEffect(() => {
     window.addEventListener('resize', calculatePages);
     return () => window.removeEventListener('resize', calculatePages);
-  }, [resume, calculatePages]);
+  }, [calculatePages]);
 
   // Get ordered sections
   const allSections = [
@@ -261,26 +265,17 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
     }
   };
 
-  // Render content for a specific page
-  const renderPageContent = (pageIndex: number) => {
-    const usableHeight = PAGE_HEIGHT - (PADDING * 2);
-    const offsetY = pageIndex * usableHeight;
-
-    return (
-      <div
-        className="absolute top-0 left-0"
-        style={{
-          width: PAGE_WIDTH - (PADDING * 2),
-          clipPath: `inset(${offsetY}px 0 0 0)`,
-          transform: `translateY(-${offsetY}px)`,
-        }}
-      >
-        {allSections.filter(s => s.visible).map((section) => 
-          renderSection(section.type, section.id)
-        )}
-      </div>
-    );
-  };
+  const resumeContentStyles = `
+    .resume-content strong, .resume-content b { font-weight: bold; }
+    .resume-content em, .resume-content i { font-style: italic; }
+    .resume-content u { text-decoration: underline; }
+    .resume-content s { text-decoration: line-through; }
+    .resume-content a { color: inherit; text-decoration: underline; }
+    .resume-content .formatted-list ul { list-style-type: disc; margin-left: 1rem; }
+    .resume-content .formatted-list ol { list-style-type: decimal; margin-left: 1rem; }
+    .resume-content .formatted-list li { margin: 0.125rem 0; }
+    .resume-content .formatted-list p { margin: 0; display: inline; }
+  `;
 
   return (
     <div className={cn("flex flex-col items-center", className)}>
@@ -313,6 +308,23 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
         </span>
       </div>
 
+      {/* Hidden measurement container */}
+      <div 
+        ref={measureRef}
+        className="absolute opacity-0 pointer-events-none"
+        style={{ 
+          width: PAGE_WIDTH - (PADDING * 2),
+          left: '-9999px',
+        }}
+      >
+        <div className="resume-content font-serif text-sm leading-relaxed" style={{ fontFamily: 'Georgia, serif' }}>
+          <style>{resumeContentStyles}</style>
+          {allSections.filter(s => s.visible).map((section) => 
+            renderSection(section.type, section.id)
+          )}
+        </div>
+      </div>
+
       {/* Scrollable Pages Container */}
       <div 
         className="relative overflow-auto bg-muted/30 rounded-lg p-8"
@@ -320,20 +332,6 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
           maxHeight: 'calc(100vh - 200px)',
         }}
       >
-        {/* Hidden content for measurement */}
-        <div 
-          ref={contentRef}
-          className="absolute opacity-0 pointer-events-none"
-          style={{ 
-            width: PAGE_WIDTH - (PADDING * 2),
-            padding: `${PADDING}px`,
-          }}
-        >
-          {allSections.filter(s => s.visible).map((section) => 
-            renderSection(section.type, section.id)
-          )}
-        </div>
-
         {/* Stacked Pages View */}
         <div className="flex flex-col gap-6 items-center">
           {Array.from({ length: totalPages }, (_, pageIndex) => (
@@ -347,38 +345,48 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
               }}
             >
               {/* Page number badge */}
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded-full">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded-full z-10">
                 Page {pageIndex + 1}
               </div>
               
-              {/* Page content */}
+              {/* Page wrapper with scaling */}
               <div
-                id={pageIndex === 0 ? "resume-preview" : undefined}
-                className="resume-content font-serif text-sm leading-relaxed overflow-hidden"
-                style={{ 
-                  fontFamily: 'Georgia, serif',
-                  padding: `${PADDING}px`,
+                style={{
                   width: PAGE_WIDTH,
                   height: PAGE_HEIGHT,
                   transform: `scale(${zoom})`,
                   transformOrigin: 'top left',
+                  overflow: 'hidden',
                   position: 'relative',
                 }}
               >
-                {/* Styles for formatted content */}
-                <style>{`
-                  .resume-content strong, .resume-content b { font-weight: bold; }
-                  .resume-content em, .resume-content i { font-style: italic; }
-                  .resume-content u { text-decoration: underline; }
-                  .resume-content s { text-decoration: line-through; }
-                  .resume-content a { color: inherit; text-decoration: underline; }
-                  .resume-content .formatted-list ul { list-style-type: disc; margin-left: 1rem; }
-                  .resume-content .formatted-list ol { list-style-type: decimal; margin-left: 1rem; }
-                  .resume-content .formatted-list li { margin: 0.125rem 0; }
-                  .resume-content .formatted-list p { margin: 0; display: inline; }
-                `}</style>
-
-                {renderPageContent(pageIndex)}
+                {/* Content area with padding - this creates the margin effect */}
+                <div
+                  id={pageIndex === 0 ? "resume-preview" : undefined}
+                  className="resume-content font-serif text-sm leading-relaxed bg-white"
+                  style={{ 
+                    fontFamily: 'Georgia, serif',
+                    padding: `${PADDING}px`,
+                    width: PAGE_WIDTH,
+                    height: PAGE_HEIGHT,
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <style>{resumeContentStyles}</style>
+                  
+                  {/* Inner content container that scrolls/offsets for pagination */}
+                  <div
+                    style={{
+                      position: 'relative',
+                      marginTop: -(pageIndex * CONTENT_HEIGHT),
+                    }}
+                  >
+                    {allSections.filter(s => s.visible).map((section) => 
+                      renderSection(section.type, section.id)
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           ))}

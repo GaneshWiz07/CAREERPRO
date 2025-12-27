@@ -6,6 +6,7 @@ import { ExperienceSection } from '@/components/resume/ExperienceSection';
 import { EducationSection } from '@/components/resume/EducationSection';
 import { SkillsSection } from '@/components/resume/SkillsSection';
 import { CertificationsSection } from '@/components/resume/CertificationsSection';
+import { CustomSectionsSection } from '@/components/resume/CustomSectionsSection';
 import { ResumePreview } from '@/components/resume/ResumePreview';
 import { useResume } from '@/contexts/ResumeContext';
 import { Button } from '@/components/ui/button';
@@ -198,6 +199,7 @@ export default function EditorPage() {
                 <EducationSection />
                 <SkillsSection />
                 <CertificationsSection />
+                <CustomSectionsSection />
               </div>
             </TabsContent>
 

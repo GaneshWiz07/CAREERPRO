@@ -44,9 +44,26 @@ export interface Certification {
   credentialId?: string;
 }
 
+export interface CustomSectionItem {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  bullets: string[];
+}
+
+export interface CustomSection {
+  id: string;
+  title: string;
+  type: 'custom';
+  items: CustomSectionItem[];
+  order: number;
+  visible: boolean;
+}
+
 export interface ResumeSection {
   id: string;
-  type: 'contact' | 'summary' | 'experience' | 'education' | 'skills' | 'certifications';
+  type: 'contact' | 'summary' | 'experience' | 'education' | 'skills' | 'certifications' | 'custom';
   title: string;
   order: number;
   visible: boolean;
@@ -61,6 +78,7 @@ export interface Resume {
   education: Education[];
   skills: Skill[];
   certifications: Certification[];
+  customSections: CustomSection[];
   sections: ResumeSection[];
   createdAt: string;
   updatedAt: string;

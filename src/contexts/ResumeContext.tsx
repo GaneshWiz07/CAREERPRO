@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { Resume, JobDescription, TailoredResume } from '@/types/resume';
+import { Resume, JobDescription, TailoredResume, CustomSection, CustomSectionItem } from '@/types/resume';
 
 const DEFAULT_SECTIONS = [
   { id: 'contact', type: 'contact' as const, title: 'Contact Information', order: 0, visible: true },
@@ -26,6 +26,7 @@ const createEmptyResume = (): Resume => ({
   education: [],
   skills: [],
   certifications: [],
+  customSections: [],
   sections: DEFAULT_SECTIONS,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
@@ -75,7 +76,7 @@ interface ImportedResumeData {
   };
   summary: string;
   experience: Array<{
-    id: string;
+    id?: string;
     company: string;
     title: string;
     location: string;
@@ -85,24 +86,37 @@ interface ImportedResumeData {
     bullets: string[];
   }>;
   education: Array<{
-    id: string;
+    id?: string;
     school: string;
     degree: string;
     field: string;
+    location?: string;
     graduationDate: string;
     gpa: string;
+    honors?: string;
   }>;
   skills: Array<{
-    id: string;
+    id?: string;
     category: string;
     items: string[];
   }>;
   certifications: Array<{
-    id: string;
+    id?: string;
     name: string;
     issuer: string;
     date: string;
-    expirationDate: string;
+    expirationDate?: string;
+    credentialId?: string;
+  }>;
+  customSections?: Array<{
+    title: string;
+    type: 'custom';
+    items: Array<{
+      title: string;
+      subtitle: string;
+      description: string;
+      bullets: string[];
+    }>;
   }>;
   detectedFont?: string;
 }
@@ -304,51 +318,90 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
 
   const importResumeData = (data: ImportedResumeData) => {
     // Convert imported data to resume format
-    const importedExperiences = data.experience.map(exp => ({
+    const importedExperiences = (data.experience || []).map(exp => ({
       id: exp.id || crypto.randomUUID(),
-      company: exp.company,
-      title: exp.title,
-      location: exp.location,
-      startDate: exp.startDate,
-      endDate: exp.endDate,
-      current: exp.current,
-      bullets: exp.bullets,
+      company: exp.company || '',
+      title: exp.title || '',
+      location: exp.location || '',
+      startDate: exp.startDate || '',
+      endDate: exp.endDate || '',
+      current: exp.current || false,
+      bullets: exp.bullets?.length > 0 ? exp.bullets : [''],
     }));
 
-    const importedEducation = data.education.map(edu => ({
+    const importedEducation = (data.education || []).map(edu => ({
       id: edu.id || crypto.randomUUID(),
-      institution: edu.school,
-      degree: edu.degree,
-      field: edu.field,
-      location: '',
-      graduationDate: edu.graduationDate,
-      gpa: edu.gpa,
+      institution: edu.school || '',
+      degree: edu.degree || '',
+      field: edu.field || '',
+      location: edu.location || '',
+      graduationDate: edu.graduationDate || '',
+      gpa: edu.gpa || '',
+      honors: edu.honors || '',
     }));
 
     // Flatten skills from categories
-    const importedSkills = data.skills.flatMap(skillGroup => 
-      skillGroup.items.map(item => ({
+    const importedSkills = (data.skills || []).flatMap(skillGroup => 
+      (skillGroup.items || []).map(item => ({
         id: crypto.randomUUID(),
         name: item,
-        category: skillGroup.category,
+        category: skillGroup.category || 'Technical',
       }))
     );
 
-    const importedCertifications = data.certifications.map(cert => ({
+    const importedCertifications = (data.certifications || []).map(cert => ({
       id: cert.id || crypto.randomUUID(),
-      name: cert.name,
-      issuer: cert.issuer,
-      date: cert.date,
-      expirationDate: cert.expirationDate,
+      name: cert.name || '',
+      issuer: cert.issuer || '',
+      date: cert.date || '',
+      expirationDate: cert.expirationDate || '',
+      credentialId: cert.credentialId || '',
     }));
 
+    // Handle custom sections
+    const importedCustomSections: CustomSection[] = (data.customSections || []).map((section, index) => ({
+      id: crypto.randomUUID(),
+      title: section.title,
+      type: 'custom' as const,
+      items: (section.items || []).map(item => ({
+        id: crypto.randomUUID(),
+        title: item.title || '',
+        subtitle: item.subtitle || '',
+        description: item.description || '',
+        bullets: item.bullets || [],
+      })),
+      order: 6 + index,
+      visible: true,
+    }));
+
+    // Update sections to include custom sections
+    const updatedSections = [
+      ...DEFAULT_SECTIONS,
+      ...importedCustomSections.map((cs, index) => ({
+        id: cs.id,
+        type: 'custom' as const,
+        title: cs.title,
+        order: 6 + index,
+        visible: true,
+      })),
+    ];
+
     updateResume({
-      contact: data.contact,
-      summary: data.summary,
+      contact: {
+        fullName: data.contact?.fullName || '',
+        email: data.contact?.email || '',
+        phone: data.contact?.phone || '',
+        location: data.contact?.location || '',
+        linkedin: data.contact?.linkedin || '',
+        website: data.contact?.website || '',
+      },
+      summary: data.summary || '',
       experiences: importedExperiences.length > 0 ? importedExperiences : resume.experiences,
       education: importedEducation.length > 0 ? importedEducation : resume.education,
       skills: importedSkills.length > 0 ? importedSkills : resume.skills,
       certifications: importedCertifications.length > 0 ? importedCertifications : resume.certifications,
+      customSections: importedCustomSections,
+      sections: updatedSections,
     });
   };
 

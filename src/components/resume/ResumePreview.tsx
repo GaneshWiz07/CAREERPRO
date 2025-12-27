@@ -9,7 +9,7 @@ interface ResumePreviewProps {
 }
 
 export function ResumePreview({ resume, showHeatmap = false, className }: ResumePreviewProps) {
-  const { contact, summary, experiences, education, skills, certifications } = resume;
+  const { contact, summary, experiences, education, skills, certifications, customSections = [] } = resume;
 
   // Heatmap zones - based on recruiter eye-tracking studies
   const getHeatmapOverlay = () => {
@@ -134,7 +134,7 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
 
         {/* Certifications */}
         {certifications.length > 0 && (
-          <section>
+          <section className="mb-4">
             <h2 className="text-sm font-bold uppercase tracking-wide text-foreground border-b border-border pb-1 mb-2">
               Certifications
             </h2>
@@ -146,6 +146,40 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
             ))}
           </section>
         )}
+
+        {/* Custom Sections */}
+        {customSections.map((section) => (
+          <section key={section.id} className="mb-4">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-foreground border-b border-border pb-1 mb-2">
+              {section.title}
+            </h2>
+            {section.items.map((item) => (
+              <div key={item.id} className="mb-2">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-xs font-bold text-foreground">{item.title}</h3>
+                    {item.subtitle && (
+                      <p className="text-xs text-muted-foreground">{item.subtitle}</p>
+                    )}
+                  </div>
+                </div>
+                {item.description && (
+                  <p className="text-xs text-foreground mt-0.5">{item.description}</p>
+                )}
+                {item.bullets.length > 0 && (
+                  <ul className="mt-1 space-y-0.5">
+                    {item.bullets.filter(b => b.trim()).map((bullet, idx) => (
+                      <li key={idx} className="text-xs text-foreground flex">
+                        <span className="mr-2">•</span>
+                        <span>{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </section>
+        ))}
       </div>
     </div>
   );

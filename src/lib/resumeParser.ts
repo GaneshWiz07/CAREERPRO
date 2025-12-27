@@ -30,9 +30,9 @@ interface ParsedResume {
     id: string;
     school: string;
     degree: string;
-    field: string;
     location?: string;
-    graduationDate: string;
+    batchStart: string;
+    batchEnd: string;
     gpa: string;
     honors?: string;
   }>;
@@ -110,9 +110,9 @@ async function parseWithGroq(text: string): Promise<ParsedResume> {
       id: generateId(),
       school: edu.school || '',
       degree: edu.degree || '',
-      field: edu.field || '',
       location: edu.location || '',
-      graduationDate: edu.graduationDate || '',
+      batchStart: edu.batchStart || '',
+      batchEnd: edu.batchEnd || '',
       gpa: edu.gpa || '',
       honors: edu.honors || '',
     })),

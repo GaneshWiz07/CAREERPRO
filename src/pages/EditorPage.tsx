@@ -7,7 +7,8 @@ import { EducationSection } from '@/components/resume/EducationSection';
 import { SkillsSection } from '@/components/resume/SkillsSection';
 import { CertificationsSection } from '@/components/resume/CertificationsSection';
 import { CustomSectionsSection } from '@/components/resume/CustomSectionsSection';
-import { ResumePreview } from '@/components/resume/ResumePreview';
+import { SectionReorder } from '@/components/resume/SectionReorder';
+import { PaginatedPreview } from '@/components/resume/PaginatedPreview';
 import { useResume } from '@/contexts/ResumeContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,7 +24,6 @@ import {
 } from '@/components/ui/dialog';
 import { 
   Save, 
-  FileCheck, 
   Download, 
   FileText, 
   Eye, 
@@ -118,6 +118,30 @@ export default function EditorPage() {
     }
   };
 
+  // Get sections in order for rendering
+  const allSections = [
+    ...resume.sections.filter(s => s.type !== 'custom'),
+    ...resume.customSections.map(cs => ({
+      id: cs.id,
+      type: 'custom' as const,
+      title: cs.title,
+      order: cs.order,
+      visible: cs.visible,
+    })),
+  ].sort((a, b) => a.order - b.order);
+
+  const renderEditSection = (sectionType: string) => {
+    switch (sectionType) {
+      case 'contact': return <ContactSection key="contact" />;
+      case 'summary': return <SummarySection key="summary" />;
+      case 'experience': return <ExperienceSection key="experience" />;
+      case 'education': return <EducationSection key="education" />;
+      case 'skills': return <SkillsSection key="skills" />;
+      case 'certifications': return <CertificationsSection key="certifications" />;
+      default: return null;
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="min-h-screen">
@@ -193,20 +217,21 @@ export default function EditorPage() {
 
             <TabsContent value="edit">
               <div className="max-w-4xl mx-auto space-y-6">
-                <ContactSection />
-                <SummarySection />
-                <ExperienceSection />
-                <EducationSection />
-                <SkillsSection />
-                <CertificationsSection />
+                {/* Section Reorder Card */}
+                <SectionReorder />
+                
+                {/* Render sections in order, excluding custom */}
+                {allSections
+                  .filter(s => s.visible && s.type !== 'custom')
+                  .map(section => renderEditSection(section.type))}
+                
+                {/* Custom sections */}
                 <CustomSectionsSection />
               </div>
             </TabsContent>
 
             <TabsContent value="preview">
-              <div className="max-w-3xl mx-auto">
-                <ResumePreview resume={resume} />
-              </div>
+              <PaginatedPreview resume={resume} />
             </TabsContent>
           </Tabs>
         </div>

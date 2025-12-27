@@ -107,10 +107,11 @@ export async function exportToPDF(resume: Resume, filename?: string): Promise<vo
     
     resume.education.forEach((edu, index) => {
       checkPageBreak(20);
-      const degreeLine = `${edu.degree}${edu.field ? ` in ${edu.field}` : ''}`;
+      const degreeLine = edu.degree;
       if (degreeLine.trim()) addText(degreeLine, 11, true);
       
-      const schoolLine = `${edu.institution}${edu.location ? `, ${edu.location}` : ''}${edu.graduationDate ? ` | ${edu.graduationDate}` : ''}`;
+      const batch = edu.batchStart && edu.batchEnd ? `${edu.batchStart} - ${edu.batchEnd}` : edu.batchStart || edu.batchEnd || '';
+      const schoolLine = `${edu.institution}${edu.location ? `, ${edu.location}` : ''}${batch ? ` | ${batch}` : ''}`;
       if (schoolLine.trim()) addText(schoolLine, 10);
       
       if (edu.gpa) addText(`GPA: ${edu.gpa}`, 9, false, '#666666');
@@ -189,8 +190,9 @@ export function exportToText(resume: Resume): string {
     lines.push('EDUCATION');
     lines.push('-'.repeat(40));
     resume.education.forEach(edu => {
-      lines.push(`${edu.degree}${edu.field ? ` in ${edu.field}` : ''}`);
-      lines.push(`${edu.institution}${edu.location ? `, ${edu.location}` : ''} | ${edu.graduationDate}`);
+      lines.push(edu.degree);
+      const batch = edu.batchStart && edu.batchEnd ? `${edu.batchStart} - ${edu.batchEnd}` : edu.batchStart || edu.batchEnd || '';
+      lines.push(`${edu.institution}${edu.location ? `, ${edu.location}` : ''}${batch ? ` | ${batch}` : ''}`);
       if (edu.gpa) lines.push(`GPA: ${edu.gpa}`);
       if (edu.honors) lines.push(edu.honors);
       lines.push('');

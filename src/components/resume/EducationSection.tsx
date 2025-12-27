@@ -52,10 +52,10 @@ export function EducationSection() {
                       <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">
-                          {edu.degree || 'Degree'} {edu.field && `in ${edu.field}`}
+                          {edu.degree || 'Degree'}
                         </p>
                         <p className="text-sm text-muted-foreground truncate">
-                          {edu.institution || 'Institution'} • {edu.graduationDate || 'Graduation Date'}
+                          {edu.institution || 'Institution'} • {edu.batchStart && edu.batchEnd ? `${edu.batchStart} - ${edu.batchEnd}` : 'Batch'}
                         </p>
                       </div>
                       <Button
@@ -91,14 +91,6 @@ export function EducationSection() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Field of Study</Label>
-                          <Input
-                            value={edu.field}
-                            onChange={(e) => updateEducation(edu.id, { field: e.target.value })}
-                            placeholder="Computer Science"
-                          />
-                        </div>
-                        <div className="space-y-2">
                           <Label>Location</Label>
                           <Input
                             value={edu.location}
@@ -107,11 +99,19 @@ export function EducationSection() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Graduation Date</Label>
+                          <Label>Batch Start</Label>
                           <Input
-                            value={edu.graduationDate}
-                            onChange={(e) => updateEducation(edu.id, { graduationDate: e.target.value })}
-                            placeholder="May 2020"
+                            value={edu.batchStart || ''}
+                            onChange={(e) => updateEducation(edu.id, { batchStart: e.target.value })}
+                            placeholder="Nov 2022"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Batch End</Label>
+                          <Input
+                            value={edu.batchEnd || ''}
+                            onChange={(e) => updateEducation(edu.id, { batchEnd: e.target.value })}
+                            placeholder="April 2026"
                           />
                         </div>
                         <div className="space-y-2">

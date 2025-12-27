@@ -209,9 +209,9 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
       id: crypto.randomUUID(),
       institution: '',
       degree: '',
-      field: '',
       location: '',
-      graduationDate: '',
+      batchStart: '',
+      batchEnd: '',
     };
     updateResume({ education: [...resume.education, newEdu] });
   };
@@ -333,9 +333,9 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
       id: edu.id || crypto.randomUUID(),
       institution: edu.school || '',
       degree: edu.degree || '',
-      field: edu.field || '',
       location: edu.location || '',
-      graduationDate: edu.graduationDate || '',
+      batchStart: edu.graduationDate?.split('-')[0]?.trim() || edu.graduationDate?.split('–')[0]?.trim() || '',
+      batchEnd: edu.graduationDate?.split('-')[1]?.trim() || edu.graduationDate?.split('–')[1]?.trim() || edu.graduationDate || '',
       gpa: edu.gpa || '',
       honors: edu.honors || '',
     }));

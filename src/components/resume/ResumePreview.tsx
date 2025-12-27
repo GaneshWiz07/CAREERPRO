@@ -102,11 +102,13 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="text-xs font-bold text-foreground">
-                      {edu.degree} {edu.field && `in ${edu.field}`}
+                      {edu.degree}
                     </h3>
                     <p className="text-xs text-muted-foreground">{edu.institution}{edu.location && `, ${edu.location}`}</p>
                   </div>
-                  <span className="text-xs text-muted-foreground">{edu.graduationDate}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {edu.batchStart && edu.batchEnd ? `${edu.batchStart} - ${edu.batchEnd}` : edu.batchStart || edu.batchEnd}
+                  </span>
                 </div>
                 {(edu.gpa || edu.honors) && (
                   <p className="text-xs text-muted-foreground mt-0.5">

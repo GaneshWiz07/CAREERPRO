@@ -170,16 +170,11 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
             {section.items.map((item) => (
               <div key={item.id} className="mb-2">
                 <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-xs font-bold text-foreground">{item.title}</h3>
-                    {item.subtitle && (
-                      <p className="text-xs text-muted-foreground">{item.subtitle}</p>
-                    )}
-                  </div>
+                  <h3 className="text-xs font-bold text-foreground">{item.title}</h3>
+                  {item.technologies && (
+                    <span className="text-xs text-muted-foreground italic">{item.technologies}</span>
+                  )}
                 </div>
-                {item.description && (
-                  <p className="text-xs text-foreground mt-0.5">{item.description}</p>
-                )}
                 {item.bullets.length > 0 && (
                   <ul className="mt-1 space-y-0.5">
                     {item.bullets.filter(b => b.trim()).map((bullet, idx) => (

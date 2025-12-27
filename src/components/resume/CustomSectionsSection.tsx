@@ -56,8 +56,7 @@ export function CustomSectionsSection() {
     const newItem: CustomSectionItem = {
       id: crypto.randomUUID(),
       title: '',
-      subtitle: '',
-      description: '',
+      technologies: '',
       bullets: [],
     };
     updateResume({
@@ -138,15 +137,17 @@ export function CustomSectionsSection() {
                   <div className="border rounded-lg p-4">
                     <CollapsibleTrigger asChild>
                       <div className="flex items-center justify-between cursor-pointer">
-                        <div>
-                          <h4 className="font-medium">
-                            {item.title || 'Untitled Item'}
-                          </h4>
-                          {item.subtitle && (
-                            <p className="text-sm text-muted-foreground">
-                              {item.subtitle}
-                            </p>
-                          )}
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-medium">
+                              {item.title || 'Untitled Item'}
+                            </h4>
+                            {item.technologies && (
+                              <span className="text-sm text-muted-foreground italic">
+                                {item.technologies}
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <div className="flex items-center gap-2">
                           <Button
@@ -179,34 +180,21 @@ export function CustomSectionsSection() {
                                 title: e.target.value,
                               })
                             }
-                            placeholder="Item title"
+                            placeholder="Project name"
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Subtitle</Label>
+                          <Label>Technologies</Label>
                           <Input
-                            value={item.subtitle}
+                            value={item.technologies}
                             onChange={e =>
                               updateCustomSectionItem(section.id, item.id, {
-                                subtitle: e.target.value,
+                                technologies: e.target.value,
                               })
                             }
-                            placeholder="Subtitle (e.g., date, location)"
+                            placeholder="React, Node.js, MongoDB"
                           />
                         </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Description</Label>
-                        <Textarea
-                          value={item.description}
-                          onChange={e =>
-                            updateCustomSectionItem(section.id, item.id, {
-                              description: e.target.value,
-                            })
-                          }
-                          placeholder="Description or details"
-                          rows={3}
-                        />
                       </div>
                       <div className="space-y-2">
                         <Label>Bullet Points (one per line)</Label>

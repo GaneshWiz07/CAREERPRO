@@ -72,10 +72,10 @@ Return ONLY valid JSON in this exact format:
   "education": [
     {
       "school": "string (institution name)",
-      "degree": "string (e.g., 'Bachelor of Technology')",
-      "field": "string (e.g., 'Computer Science and Engineering')",
+      "degree": "string (e.g., 'Bachelor of Technology in Computer Science and Engineering' - include the full degree with field/major)",
       "location": "string",
-      "graduationDate": "string",
+      "batchStart": "string (the year the person STARTED this education, e.g., '2022' or 'Nov 2022'. Look for admission year, enrollment year, or calculate from graduation year minus typical degree duration: 4 years for B.Tech/B.E., 3 years for BSc/BA, 2 years for Masters)",
+      "batchEnd": "string (the year the person COMPLETED or will complete this education, e.g., '2026' or 'April 2026'. This is the graduation year/expected graduation)",
       "gpa": "string",
       "honors": "string"
     }

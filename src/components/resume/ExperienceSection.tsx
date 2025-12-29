@@ -18,7 +18,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { supabase } from '@/integrations/supabase/client';
+import { invokeNetlifyFunction } from '@/lib/api';
 import { toast } from 'sonner';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
 
@@ -60,12 +60,10 @@ export function ExperienceSection() {
 
     setEnhancingBullet({ expId, index });
     try {
-      const { data, error } = await supabase.functions.invoke('transform-achievement', {
-        body: {
-          bullet: exp.bullets[index],
-          role: exp.title,
-          company: exp.company,
-        },
+      const { data, error } = await invokeNetlifyFunction('transform-achievement', {
+        bullet: exp.bullets[index],
+        role: exp.title,
+        company: exp.company,
       });
 
       if (error) throw error;

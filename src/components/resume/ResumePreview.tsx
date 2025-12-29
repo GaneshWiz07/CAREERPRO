@@ -43,48 +43,6 @@ const TEMPLATE_STYLES: Record<string, {
     bodyStyle: "text-xs leading-relaxed",
     layout: 'classic',
   },
-  technical: {
-    fontFamily: "'Roboto', sans-serif",
-    headerStyle: "text-left border-b border-teal-500 pb-3 mb-4",
-    sectionHeaderStyle: "text-sm font-semibold text-teal-700 border-l-4 border-teal-500 pl-2 mb-2",
-    nameStyle: "text-2xl font-bold mb-1",
-    bodyStyle: "text-xs leading-relaxed",
-    accentColor: '#0d9488',
-    layout: 'modern',
-  },
-  minimal: {
-    fontFamily: "'Source Sans 3', sans-serif",
-    headerStyle: "text-left mb-6",
-    sectionHeaderStyle: "text-xs font-medium uppercase tracking-[0.15em] text-gray-500 mb-2",
-    nameStyle: "text-3xl font-light tracking-tight mb-1",
-    bodyStyle: "text-xs leading-relaxed text-gray-700",
-    layout: 'modern',
-  },
-  creative: {
-    fontFamily: "'Lato', sans-serif",
-    headerStyle: "text-center bg-gradient-to-r from-purple-50 to-pink-50 -mx-8 -mt-8 px-8 pt-8 pb-4 mb-4",
-    sectionHeaderStyle: "text-sm font-bold text-purple-700 border-l-4 border-purple-400 pl-3 mb-2",
-    nameStyle: "text-2xl font-bold bg-gradient-to-r from-purple-700 to-pink-600 bg-clip-text text-transparent mb-1",
-    bodyStyle: "text-xs leading-relaxed",
-    accentColor: '#7c3aed',
-    layout: 'modern',
-  },
-  compact: {
-    fontFamily: "'Roboto', sans-serif",
-    headerStyle: "flex justify-between items-start border-b border-gray-300 pb-2 mb-3",
-    sectionHeaderStyle: "text-xs font-bold uppercase tracking-wide text-gray-700 mb-1",
-    nameStyle: "text-xl font-bold mb-0",
-    bodyStyle: "text-[11px] leading-snug",
-    layout: 'compact',
-  },
-  academic: {
-    fontFamily: "'EB Garamond', serif",
-    headerStyle: "text-center mb-4",
-    sectionHeaderStyle: "text-sm font-bold uppercase tracking-wide border-t-2 border-b border-gray-800 py-1 mb-3 mt-2",
-    nameStyle: "text-2xl font-bold tracking-wide mb-1",
-    bodyStyle: "text-xs leading-relaxed",
-    layout: 'classic',
-  },
 };
 
 // Check if content is empty (handles both plain text and HTML)

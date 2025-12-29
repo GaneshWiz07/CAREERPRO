@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ResumeProvider } from "@/contexts/ResumeContext";
+import ScrollToTop from "@/components/ScrollToTop";
 import LandingPage from "./pages/LandingPage";
 import EditorPage from "./pages/EditorPage";
 import TailorPage from "./pages/TailorPage";
@@ -25,6 +26,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/editor" element={<EditorPage />} />

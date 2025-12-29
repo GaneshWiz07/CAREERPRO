@@ -18,10 +18,12 @@ const handler: Handler = async (event: HandlerEvent, context: HandlerContext) =>
   try {
     const { bullet, role, company } = JSON.parse(event.body || '{}');
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
-    
+
     if (!GROQ_API_KEY) {
-      throw new Error('GROQ_API_KEY is not configured');
+      console.error('GROQ_API_KEY is missing');
+      throw new Error('Service configuration error. Please contact support.');
     }
+    console.log('GROQ_API_KEY loaded:', GROQ_API_KEY.substring(0, 4) + '...');
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',

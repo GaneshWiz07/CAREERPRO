@@ -18,10 +18,12 @@ const handler: Handler = async (event: HandlerEvent, context: HandlerContext) =>
   try {
     const { resume, jobDescription } = JSON.parse(event.body || '{}');
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
-    
+
     if (!GROQ_API_KEY) {
-      throw new Error('GROQ_API_KEY is not configured');
+      console.error('GROQ_API_KEY is missing');
+      throw new Error('Service configuration error. Please contact support.');
     }
+    console.log('GROQ_API_KEY loaded:', GROQ_API_KEY.substring(0, 4) + '...');
 
     const resumeText = `
 CONTACT:
@@ -35,25 +37,25 @@ SUMMARY:
 ${resume.summary || 'No summary provided'}
 
 WORK EXPERIENCE:
-${resume.experiences?.map((e: any) => 
-  `${e.title} at ${e.company} (${e.startDate} - ${e.current ? 'Present' : e.endDate})
+${resume.experiences?.map((e: any) =>
+      `${e.title} at ${e.company} (${e.startDate} - ${e.current ? 'Present' : e.endDate})
   Location: ${e.location || 'Not specified'}
   Achievements:
   ${e.bullets?.map((b: string) => `  • ${b}`).join('\n') || '  No bullets'}`
-).join('\n\n') || 'No experience listed'}
+    ).join('\n\n') || 'No experience listed'}
 
 EDUCATION:
-${resume.education?.map((e: any) => 
-  `${e.degree} in ${e.field} from ${e.institution} (${e.graduationDate})${e.gpa ? ` - GPA: ${e.gpa}` : ''}`
-).join('\n') || 'No education listed'}
+${resume.education?.map((e: any) =>
+      `${e.degree} in ${e.field} from ${e.institution} (${e.graduationDate})${e.gpa ? ` - GPA: ${e.gpa}` : ''}`
+    ).join('\n') || 'No education listed'}
 
 SKILLS:
 ${resume.skills?.map((s: any) => s.name).join(', ') || 'No skills listed'}
 
 CERTIFICATIONS:
-${resume.certifications?.map((c: any) => 
-  `${c.name} - ${c.issuer} (${c.date})`
-).join('\n') || 'No certifications listed'}
+${resume.certifications?.map((c: any) =>
+      `${c.name} - ${c.issuer} (${c.date})`
+    ).join('\n') || 'No certifications listed'}
 `;
 
     const systemPrompt = `You are an expert ATS (Applicant Tracking System) analyzer with deep knowledge of how systems like Workday, Greenhouse, Lever, and Taleo parse and score resumes.
@@ -143,7 +145,7 @@ Provide comprehensive ATS analysis with optimized content.`
 
     const data = await response.json();
     const content = data.choices[0]?.message?.content?.trim();
-    
+
     let result;
     try {
       const jsonMatch = content.match(/\{[\s\S]*\}/);

@@ -3,18 +3,18 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
-  FileText,
-  Target,
-  Sparkles,
-  BarChart3,
-  Settings,
+  FilePenLine,
+  ScanSearch,
+  Wand2,
+  ScanLine,
+  Eye,
+  MessagesSquare,
+  TrendingUp,
+  Settings2,
   ChevronLeft,
   ChevronRight,
   Plus,
-  FolderOpen,
-  MessageSquare,
-  DollarSign,
-  Flame,
+  Files,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -32,13 +32,13 @@ interface DashboardLayoutProps {
 }
 
 const NAV_ITEMS = [
-  { icon: FileText, label: 'Resume Editor', path: '/editor' },
-  { icon: Target, label: 'Job Tailoring', path: '/tailor' },
-  { icon: Sparkles, label: 'Achievement Transformer', path: '/achievements' },
-  { icon: BarChart3, label: 'ATS Analysis', path: '/analysis' },
-  { icon: Flame, label: 'Recruiter Heatmap', path: '/heatmap' },
-  { icon: MessageSquare, label: 'Interview Coach', path: '/interview' },
-  { icon: DollarSign, label: 'Salary Negotiation', path: '/salary' },
+  { icon: FilePenLine, label: 'Resume Editor', path: '/editor' },
+  { icon: ScanSearch, label: 'Job Tailoring', path: '/tailor' },
+  { icon: Wand2, label: 'Achievement Transformer', path: '/achievements' },
+  { icon: ScanLine, label: 'ATS Analysis', path: '/analysis' },
+  { icon: Eye, label: 'Recruiter Heatmap', path: '/heatmap' },
+  { icon: MessagesSquare, label: 'Interview Coach', path: '/interview' },
+  { icon: TrendingUp, label: 'Salary Negotiation', path: '/salary' },
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
@@ -63,16 +63,16 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       >
         {/* Gradient glow effect */}
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/5 pointer-events-none" />
-        
+
         {/* Logo */}
         <div className="relative flex h-16 items-center justify-between px-4 border-b border-border">
           {!collapsed && (
             <Link to="/" className="flex items-center gap-2 group">
-              <motion.div 
+              <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20"
+                className="h-8 w-8 rounded-lg flex items-center justify-center"
               >
-                <FileText className="h-4 w-4 text-primary-foreground" />
+                <img src="/logo.svg" alt="CareerPro Logo" className="h-8 w-8" />
               </motion.div>
               <span className="font-semibold text-foreground">CareerPro</span>
             </Link>
@@ -152,12 +152,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                             transition={{ type: 'spring', duration: 0.5 }}
                           />
                         )}
-                        
+
                         {/* Hover background */}
                         {!isActive && (
                           <div className="absolute inset-0 rounded-lg bg-accent opacity-0 hover:opacity-100 transition-opacity" />
                         )}
-                        
+
                         <item.icon className={cn('h-5 w-5 flex-shrink-0 relative z-10', isActive && 'text-primary-foreground')} />
                         {!collapsed && <span className="relative z-10">{item.label}</span>}
                       </motion.div>
@@ -197,7 +197,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                         transition={{ type: 'spring', duration: 0.5 }}
                       />
                     )}
-                    <FolderOpen className={cn('h-5 w-5 flex-shrink-0 relative z-10', location.pathname === '/resumes' && 'text-primary-foreground')} />
+                    <Files className={cn('h-5 w-5 flex-shrink-0 relative z-10', location.pathname === '/resumes' && 'text-primary-foreground')} />
                     {!collapsed && <span className="relative z-10">My Resumes</span>}
                   </motion.div>
                 </Link>
@@ -230,7 +230,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                         transition={{ type: 'spring', duration: 0.5 }}
                       />
                     )}
-                    <Settings className={cn('h-5 w-5 flex-shrink-0 relative z-10', location.pathname === '/settings' && 'text-primary-foreground')} />
+                    <Settings2 className={cn('h-5 w-5 flex-shrink-0 relative z-10', location.pathname === '/settings' && 'text-primary-foreground')} />
                     {!collapsed && <span className="relative z-10">Settings</span>}
                   </motion.div>
                 </Link>

@@ -17,15 +17,17 @@ const handler: Handler = async (event: HandlerEvent, context: HandlerContext) =>
 
   try {
     const { resumeText } = JSON.parse(event.body || '{}');
-    
+
     if (!resumeText || typeof resumeText !== 'string') {
       throw new Error('Resume text is required');
     }
 
     const groqApiKey = process.env.GROQ_API_KEY;
     if (!groqApiKey) {
-      throw new Error('GROQ_API_KEY is not configured');
+      console.error('GROQ_API_KEY is missing');
+      throw new Error('Service configuration error. Please contact support.');
     }
+    console.log('GROQ_API_KEY loaded:', groqApiKey.substring(0, 4) + '...');
 
     console.log('Parsing resume with Groq, text length:', resumeText.length);
 
@@ -128,15 +130,16 @@ Return ONLY valid JSON in this exact format:
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Groq API error:', response.status, errorText);
-      throw new Error(`Groq API error: ${response.status}`);
+      throw new Error('AI service is currently unavailable. Please try again later.');
     }
 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
-    
+
     if (!content) {
       throw new Error('No response from Groq API');
     }
+
 
     console.log('Groq response:', content.substring(0, 500));
 
@@ -146,12 +149,12 @@ Return ONLY valid JSON in this exact format:
       if (jsonMatch) {
         parsedResume = JSON.parse(jsonMatch[0]);
       } else {
-        throw new Error('No JSON found in response');
+        throw new Error('Invalid response format');
       }
     } catch (parseError) {
       console.error('JSON parse error:', parseError);
       console.error('Content:', content);
-      throw new Error('Failed to parse Groq response as JSON');
+      throw new Error('We encountered an issue parsing the analysis result. Please try again.');
     }
 
     return {

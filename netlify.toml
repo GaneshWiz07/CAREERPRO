@@ -1,12 +1,21 @@
 [build]
+  command = "npm run build"
   functions = "netlify/functions"
   publish = "dist"
 
 [functions]
   node_bundler = "esbuild"
 
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
+
+[dev]
+  targetPort = 8080

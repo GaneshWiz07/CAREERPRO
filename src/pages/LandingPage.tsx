@@ -2,17 +2,17 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  FileText,
-  Target,
-  Sparkles,
-  BarChart3,
-  Flame,
-  MessageSquare,
-  DollarSign,
-  ArrowRight,
+  FilePenLine,
+  ScanSearch,
   Wand2,
+  ScanLine,
+  Eye,
+  MessagesSquare,
+  TrendingUp,
+  ArrowRight,
   Zap,
   Shield,
+  Target,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Spotlight } from "@/components/ui/aceternity/spotlight";
@@ -22,13 +22,14 @@ import { LampContainer } from "@/components/ui/aceternity/lamp";
 import { CardSpotlight } from "@/components/ui/aceternity/card-spotlight";
 import { MovingBorderButton } from "@/components/ui/aceternity/moving-border";
 import { BackgroundBeams } from "@/components/ui/aceternity/background-beams";
+import { HoverEffect } from "@/components/ui/aceternity/card-hover-effect";
 
 const features = [
   {
     title: "Resume Editor",
     description:
       "Create stunning, ATS-optimized resumes with our intuitive drag-and-drop editor. Multiple templates, real-time preview, and PDF export.",
-    icon: <FileText className="h-6 w-6 text-primary" />,
+    icon: <FilePenLine className="h-6 w-6 text-primary" />,
     className: "md:col-span-2",
     header: (
       <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent" />
@@ -38,7 +39,7 @@ const features = [
     title: "Job Tailoring",
     description:
       "Paste any job description and get personalized suggestions to tailor your resume for maximum impact.",
-    icon: <Target className="h-6 w-6 text-primary" />,
+    icon: <ScanSearch className="h-6 w-6 text-primary" />,
     className: "md:col-span-1",
     header: (
       <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-secondary/20 via-secondary/5 to-transparent" />
@@ -48,7 +49,7 @@ const features = [
     title: "Achievement Transformer",
     description:
       "Transform bland bullet points into powerful, quantified achievements that grab attention.",
-    icon: <Sparkles className="h-6 w-6 text-primary" />,
+    icon: <Wand2 className="h-6 w-6 text-primary" />,
     className: "md:col-span-1",
     header: (
       <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-muted/30 via-muted/10 to-transparent" />
@@ -58,7 +59,7 @@ const features = [
     title: "ATS Analysis",
     description:
       "Get instant feedback on your resume's ATS compatibility score and actionable recommendations.",
-    icon: <BarChart3 className="h-6 w-6 text-primary" />,
+    icon: <ScanLine className="h-6 w-6 text-primary" />,
     className: "md:col-span-2",
     header: (
       <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-primary/15 via-secondary/10 to-transparent" />
@@ -68,7 +69,7 @@ const features = [
     title: "Recruiter Heatmap",
     description:
       "See exactly where recruiters focus their attention on your resume with AI-powered eye-tracking simulation.",
-    icon: <Flame className="h-6 w-6 text-primary" />,
+    icon: <Eye className="h-6 w-6 text-primary" />,
     className: "md:col-span-1",
     header: (
       <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-destructive/10 via-destructive/5 to-transparent" />
@@ -78,7 +79,7 @@ const features = [
     title: "Interview Coach",
     description:
       "Practice with AI-generated interview questions tailored to your target role and experience.",
-    icon: <MessageSquare className="h-6 w-6 text-primary" />,
+    icon: <MessagesSquare className="h-6 w-6 text-primary" />,
     className: "md:col-span-1",
     header: (
       <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-secondary/15 via-muted/10 to-transparent" />
@@ -88,7 +89,7 @@ const features = [
     title: "Salary Negotiation",
     description:
       "Get data-driven salary insights and negotiation scripts to maximize your compensation.",
-    icon: <DollarSign className="h-6 w-6 text-primary" />,
+    icon: <TrendingUp className="h-6 w-6 text-primary" />,
     className: "md:col-span-1",
     header: (
       <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-primary/10 via-muted/5 to-transparent" />
@@ -128,12 +129,12 @@ export default function LandingPage() {
       <section className="relative min-h-screen flex flex-col items-center justify-center px-4">
         <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" />
         <BackgroundBeams className="absolute inset-0" />
-        
+
         {/* Navigation */}
         <nav className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between p-6 max-w-7xl mx-auto">
           <Link to="/" className="flex items-center gap-2">
-            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-              <FileText className="h-5 w-5 text-primary-foreground" />
+            <div className="h-10 w-10 rounded-xl flex items-center justify-center">
+              <img src="/logo.svg" alt="CareerPro Logo" className="h-10 w-10" />
             </div>
             <span className="text-xl font-bold text-foreground">CareerPro</span>
           </Link>
@@ -184,7 +185,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8"
           >
-            The complete AI toolkit for building ATS-optimized resumes, tailoring for any job, 
+            The complete AI toolkit for building ATS-optimized resumes, tailoring for any job,
             and preparing for interviews. Everything you need in one powerful platform.
           </motion.p>
 
@@ -264,18 +265,11 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <BentoGrid>
-            {features.map((feature, i) => (
-              <BentoGridItem
-                key={i}
-                title={feature.title}
-                description={feature.description}
-                header={feature.header}
-                icon={feature.icon}
-                className={feature.className}
-              />
-            ))}
-          </BentoGrid>
+          <HoverEffect items={features.map(f => ({
+            title: f.title,
+            description: f.description,
+            icon: f.icon
+          }))} />
         </div>
       </section>
 
@@ -350,8 +344,8 @@ export default function LandingPage() {
       <footer className="border-t border-border py-12 px-4">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <FileText className="h-4 w-4 text-primary-foreground" />
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center">
+              <img src="/logo.svg" alt="CareerPro Logo" className="h-8 w-8" />
             </div>
             <span className="font-semibold text-foreground">CareerPro</span>
           </div>

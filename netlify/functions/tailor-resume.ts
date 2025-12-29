@@ -25,18 +25,20 @@ const handler: Handler = async (event: HandlerEvent, context: HandlerContext) =>
   try {
     const { jobDescription, jobTitle, company, resume } = JSON.parse(event.body || '{}');
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
-    
+
     if (!GROQ_API_KEY) {
-      throw new Error('GROQ_API_KEY is not configured');
+      console.error('GROQ_API_KEY is missing');
+      throw new Error('Service configuration error. Please contact support.');
     }
+    console.log('GROQ_API_KEY loaded:', GROQ_API_KEY.substring(0, 4) + '...');
 
     const resumeText = `
 Summary: ${resume.summary || 'None'}
 Skills: ${resume.skills?.map((s: { name: string }) => s.name).join(', ') || 'None'}
-Experience: ${resume.experiences?.map((e: { title: string; company: string; bullets: string[] }) => 
-  `${e.title} at ${e.company}: ${e.bullets.join('; ')}`).join(' | ') || 'None'}
-Education: ${resume.education?.map((e: { degree: string; field: string; institution: string }) => 
-  `${e.degree} in ${e.field} from ${e.institution}`).join(', ') || 'None'}
+Experience: ${resume.experiences?.map((e: { title: string; company: string; bullets: string[] }) =>
+      `${e.title} at ${e.company}: ${e.bullets.join('; ')}`).join(' | ') || 'None'}
+Education: ${resume.education?.map((e: { degree: string; field: string; institution: string }) =>
+        `${e.degree} in ${e.field} from ${e.institution}`).join(', ') || 'None'}
 `;
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -89,7 +91,7 @@ ${resumeText}`
 
     const data = await response.json();
     const content = data.choices[0]?.message?.content?.trim();
-    
+
     let result;
     try {
       const jsonMatch = content.match(/\{[\s\S]*\}/);

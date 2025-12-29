@@ -8,6 +8,85 @@ interface ResumePreviewProps {
   className?: string;
 }
 
+// Template style configurations
+const TEMPLATE_STYLES: Record<string, {
+  fontFamily: string;
+  headerStyle: string;
+  sectionHeaderStyle: string;
+  nameStyle: string;
+  bodyStyle: string;
+  accentColor?: string;
+  layout: 'classic' | 'modern' | 'compact';
+}> = {
+  classic: {
+    fontFamily: "'Georgia', serif",
+    headerStyle: "text-center border-b border-gray-400 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-bold uppercase tracking-wide border-b border-gray-400 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold mb-1",
+    bodyStyle: "text-xs leading-relaxed",
+    layout: 'classic',
+  },
+  modern: {
+    fontFamily: "'Open Sans', sans-serif",
+    headerStyle: "text-center border-b-2 border-blue-600 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-bold uppercase tracking-wider text-blue-700 border-b-2 border-blue-200 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-gray-900 mb-1",
+    bodyStyle: "text-xs leading-relaxed",
+    accentColor: '#2563eb',
+    layout: 'modern',
+  },
+  executive: {
+    fontFamily: "'Merriweather', serif",
+    headerStyle: "text-center border-b-2 border-gray-800 pb-4 mb-5",
+    sectionHeaderStyle: "text-xs font-bold uppercase tracking-[0.2em] border-b-2 border-gray-800 pb-1 mb-3",
+    nameStyle: "text-3xl font-bold tracking-wide mb-2",
+    bodyStyle: "text-xs leading-relaxed",
+    layout: 'classic',
+  },
+  technical: {
+    fontFamily: "'Roboto', sans-serif",
+    headerStyle: "text-left border-b border-teal-500 pb-3 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold text-teal-700 border-l-4 border-teal-500 pl-2 mb-2",
+    nameStyle: "text-2xl font-bold mb-1",
+    bodyStyle: "text-xs leading-relaxed",
+    accentColor: '#0d9488',
+    layout: 'modern',
+  },
+  minimal: {
+    fontFamily: "'Source Sans 3', sans-serif",
+    headerStyle: "text-left mb-6",
+    sectionHeaderStyle: "text-xs font-medium uppercase tracking-[0.15em] text-gray-500 mb-2",
+    nameStyle: "text-3xl font-light tracking-tight mb-1",
+    bodyStyle: "text-xs leading-relaxed text-gray-700",
+    layout: 'modern',
+  },
+  creative: {
+    fontFamily: "'Lato', sans-serif",
+    headerStyle: "text-center bg-gradient-to-r from-purple-50 to-pink-50 -mx-8 -mt-8 px-8 pt-8 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-bold text-purple-700 border-l-4 border-purple-400 pl-3 mb-2",
+    nameStyle: "text-2xl font-bold bg-gradient-to-r from-purple-700 to-pink-600 bg-clip-text text-transparent mb-1",
+    bodyStyle: "text-xs leading-relaxed",
+    accentColor: '#7c3aed',
+    layout: 'modern',
+  },
+  compact: {
+    fontFamily: "'Roboto', sans-serif",
+    headerStyle: "flex justify-between items-start border-b border-gray-300 pb-2 mb-3",
+    sectionHeaderStyle: "text-xs font-bold uppercase tracking-wide text-gray-700 mb-1",
+    nameStyle: "text-xl font-bold mb-0",
+    bodyStyle: "text-[11px] leading-snug",
+    layout: 'compact',
+  },
+  academic: {
+    fontFamily: "'EB Garamond', serif",
+    headerStyle: "text-center mb-4",
+    sectionHeaderStyle: "text-sm font-bold uppercase tracking-wide border-t-2 border-b border-gray-800 py-1 mb-3 mt-2",
+    nameStyle: "text-2xl font-bold tracking-wide mb-1",
+    bodyStyle: "text-xs leading-relaxed",
+    layout: 'classic',
+  },
+};
+
 // Check if content is empty (handles both plain text and HTML)
 const isEmptyContent = (content: string): boolean => {
   if (!content) return true;
@@ -46,6 +125,8 @@ const RenderHtml = ({ html, className }: { html: string; className?: string }) =
 
 export function ResumePreview({ resume, showHeatmap = false, className }: ResumePreviewProps) {
   const { contact, summary, experiences, education, skills, certifications, customSections = [] } = resume;
+  const templateId = resume.templateId || 'classic';
+  const styles = TEMPLATE_STYLES[templateId] || TEMPLATE_STYLES.classic;
 
   // Get ordered sections
   const allSections = [
@@ -79,17 +160,34 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
   const renderSection = (sectionType: string, sectionId?: string) => {
     switch (sectionType) {
       case 'contact':
+        if (styles.layout === 'compact') {
+          return (
+            <header key="contact" className={styles.headerStyle}>
+              <div>
+                <h1 className={styles.nameStyle} style={{ color: '#1f2937' }}>
+                  {contact.fullName || 'Your Name'}
+                </h1>
+              </div>
+              <div className="text-right text-[10px] text-gray-600 space-y-0.5">
+                {contact.email && <div>{contact.email}</div>}
+                {contact.phone && <div>{contact.phone}</div>}
+                {contact.location && <div>{contact.location}</div>}
+              </div>
+            </header>
+          );
+        }
+        
         return (
-          <header key="contact" className="text-center border-b border-border pb-4 mb-4">
-            <h1 className="text-2xl font-bold text-foreground mb-1">
+          <header key="contact" className={styles.headerStyle}>
+            <h1 className={styles.nameStyle} style={{ color: styles.accentColor || '#1f2937' }}>
               {contact.fullName || 'Your Name'}
             </h1>
-            <div className="text-xs text-muted-foreground flex flex-wrap justify-center gap-2">
+            <div className="text-xs text-gray-600 flex flex-wrap justify-center gap-2">
               {contact.email && <span>{contact.email}</span>}
               {contact.phone && <span>• {contact.phone}</span>}
               {contact.location && <span>• {contact.location}</span>}
             </div>
-            <div className="text-xs text-muted-foreground flex flex-wrap justify-center gap-2 mt-1">
+            <div className="text-xs text-gray-500 flex flex-wrap justify-center gap-2 mt-1">
               {contact.linkedin && <span>{contact.linkedin}</span>}
               {contact.website && <span>• {contact.website}</span>}
             </div>
@@ -99,11 +197,11 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
       case 'summary':
         if (isEmptyContent(summary)) return null;
         return (
-          <section key="summary" className="mb-4">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-foreground border-b border-border pb-1 mb-2">
+          <section key="summary" className={styles.layout === 'compact' ? 'mb-2' : 'mb-4'}>
+            <h2 className={styles.sectionHeaderStyle}>
               Professional Summary
             </h2>
-            <div className="text-xs text-foreground leading-relaxed">
+            <div className={styles.bodyStyle} style={{ color: '#374151' }}>
               <RenderHtml html={summary} />
             </div>
           </section>
@@ -112,25 +210,27 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
       case 'experience':
         if (experiences.length === 0) return null;
         return (
-          <section key="experience" className="mb-4">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-foreground border-b border-border pb-1 mb-2">
+          <section key="experience" className={styles.layout === 'compact' ? 'mb-2' : 'mb-4'}>
+            <h2 className={styles.sectionHeaderStyle}>
               Work Experience
             </h2>
             {experiences.map((exp) => (
-              <div key={exp.id} className="mb-3">
+              <div key={exp.id} className={styles.layout === 'compact' ? 'mb-2' : 'mb-3'}>
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-xs font-bold text-foreground">{exp.title || 'Position'}</h3>
-                    <p className="text-xs text-muted-foreground">{exp.company}{exp.location && `, ${exp.location}`}</p>
+                    <h3 className="text-xs font-bold" style={{ color: styles.accentColor || '#1f2937' }}>
+                      {exp.title || 'Position'}
+                    </h3>
+                    <p className="text-xs text-gray-600">{exp.company}{exp.location && `, ${exp.location}`}</p>
                   </div>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap font-bold">
+                  <span className="text-xs text-gray-500 whitespace-nowrap font-semibold">
                     {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
                   </span>
                 </div>
                 {exp.bullets.filter(b => !isEmptyContent(b)).length > 0 && (
                   <ul className="mt-1 space-y-0.5">
                     {exp.bullets.filter(b => !isEmptyContent(b)).map((bullet, idx) => (
-                      <li key={idx} className="text-xs text-foreground flex">
+                      <li key={idx} className={cn(styles.bodyStyle, "flex")} style={{ color: '#374151' }}>
                         <span className="mr-2">•</span>
                         <RenderHtml html={bullet} />
                       </li>
@@ -145,23 +245,25 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
       case 'education':
         if (education.length === 0) return null;
         return (
-          <section key="education" className="mb-4">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-foreground border-b border-border pb-1 mb-2">
+          <section key="education" className={styles.layout === 'compact' ? 'mb-2' : 'mb-4'}>
+            <h2 className={styles.sectionHeaderStyle}>
               Education
             </h2>
             {education.map((edu) => (
-              <div key={edu.id} className="mb-2">
+              <div key={edu.id} className={styles.layout === 'compact' ? 'mb-1' : 'mb-2'}>
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-xs font-bold text-foreground">{edu.degree}</h3>
-                    <p className="text-xs text-muted-foreground">{edu.institution}{edu.location && `, ${edu.location}`}</p>
+                    <h3 className="text-xs font-bold" style={{ color: styles.accentColor || '#1f2937' }}>
+                      {edu.degree}
+                    </h3>
+                    <p className="text-xs text-gray-600">{edu.institution}{edu.location && `, ${edu.location}`}</p>
                   </div>
-                  <span className="text-xs text-muted-foreground font-bold">
+                  <span className="text-xs text-gray-500 font-semibold">
                     {edu.batchStart && edu.batchEnd ? `${edu.batchStart} - ${edu.batchEnd}` : edu.batchStart || edu.batchEnd}
                   </span>
                 </div>
                 {(edu.gpa || (edu.honors && !isEmptyContent(edu.honors))) && (
-                  <div className="text-xs text-muted-foreground mt-0.5">
+                  <div className="text-xs text-gray-500 mt-0.5">
                     {edu.gpa && <span>GPA: {edu.gpa}</span>}
                     {edu.gpa && edu.honors && !isEmptyContent(edu.honors) && <span> | </span>}
                     {edu.honors && !isEmptyContent(edu.honors) && <RenderHtml html={edu.honors} />}
@@ -175,8 +277,8 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
       case 'skills':
         if (skills.length === 0) return null;
         return (
-          <section key="skills" className="mb-4">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-foreground border-b border-border pb-1 mb-2">
+          <section key="skills" className={styles.layout === 'compact' ? 'mb-2' : 'mb-4'}>
+            <h2 className={styles.sectionHeaderStyle}>
               Skills
             </h2>
             <div className="space-y-1">
@@ -188,8 +290,8 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
                   return acc;
                 }, {} as Record<string, string[]>)
               ).map(([category, items]) => (
-                <p key={category} className="text-xs text-foreground">
-                  <span className="font-semibold">{category}:</span>{' '}
+                <p key={category} className={styles.bodyStyle} style={{ color: '#374151' }}>
+                  <span className="font-semibold" style={{ color: styles.accentColor || '#1f2937' }}>{category}:</span>{' '}
                   {items.filter(Boolean).join(', ')}
                 </p>
               ))}
@@ -200,14 +302,14 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
       case 'certifications':
         if (certifications.length === 0) return null;
         return (
-          <section key="certifications" className="mb-4">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-foreground border-b border-border pb-1 mb-2">
+          <section key="certifications" className={styles.layout === 'compact' ? 'mb-2' : 'mb-4'}>
+            <h2 className={styles.sectionHeaderStyle}>
               Certifications
             </h2>
             {certifications.map((cert) => (
-              <div key={cert.id} className="flex justify-between text-xs mb-1">
-                <span className="font-medium text-foreground">{cert.name}</span>
-                <span className="text-muted-foreground">{cert.issuer} • {cert.date}</span>
+              <div key={cert.id} className={cn("flex justify-between", styles.bodyStyle, styles.layout === 'compact' ? 'mb-0.5' : 'mb-1')}>
+                <span className="font-medium" style={{ color: styles.accentColor || '#1f2937' }}>{cert.name}</span>
+                <span className="text-gray-500">{cert.issuer} • {cert.date}</span>
               </div>
             ))}
           </section>
@@ -217,27 +319,27 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
         const customSection = customSections.find(cs => cs.id === sectionId);
         if (!customSection || customSection.items.length === 0) return null;
         return (
-          <section key={customSection.id} className="mb-4">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-foreground border-b border-border pb-1 mb-2">
+          <section key={customSection.id} className={styles.layout === 'compact' ? 'mb-2' : 'mb-4'}>
+            <h2 className={styles.sectionHeaderStyle}>
               {customSection.title}
             </h2>
             {customSection.items.map((item) => (
-              <div key={item.id} className="mb-2">
+              <div key={item.id} className={styles.layout === 'compact' ? 'mb-1' : 'mb-2'}>
                 <div className="flex justify-between items-start">
                   <div className="flex items-baseline gap-4 flex-1">
-                    <h3 className="text-xs font-bold text-foreground">{item.title}</h3>
+                    <h3 className="text-xs font-bold" style={{ color: styles.accentColor || '#1f2937' }}>{item.title}</h3>
                     {customSection.showTechnologies && item.technologies && (
-                      <span className="text-xs text-muted-foreground italic">{item.technologies}</span>
+                      <span className="text-xs text-gray-500 italic">{item.technologies}</span>
                     )}
                   </div>
                   {item.date && (
-                    <span className="text-xs text-muted-foreground whitespace-nowrap font-bold">{item.date}</span>
+                    <span className="text-xs text-gray-500 whitespace-nowrap font-semibold">{item.date}</span>
                   )}
                 </div>
                 {item.bullets.filter(b => !isEmptyContent(b)).length > 0 && (
                   <ul className="mt-1 space-y-0.5">
                     {item.bullets.filter(b => !isEmptyContent(b)).map((bullet, idx) => (
-                      <li key={idx} className="text-xs text-foreground flex">
+                      <li key={idx} className={cn(styles.bodyStyle, "flex")} style={{ color: '#374151' }}>
                         <span className="mr-2">•</span>
                         <RenderHtml html={bullet} />
                       </li>
@@ -255,7 +357,7 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
   };
 
   return (
-    <div className={cn("relative bg-card border border-border rounded-lg shadow-sm", className)}>
+    <div className={cn("relative bg-white border border-gray-200 rounded-lg shadow-sm", className)}>
       {getHeatmapOverlay()}
       
       {/* Add styles for formatted content */}
@@ -271,7 +373,14 @@ export function ResumePreview({ resume, showHeatmap = false, className }: Resume
         .resume-content .formatted-list p { margin: 0; display: inline; }
       `}</style>
       
-      <div id="resume-preview" className="p-8 font-serif text-sm leading-relaxed resume-content" style={{ fontFamily: 'Georgia, serif' }}>
+      <div 
+        id="resume-preview" 
+        className={cn(
+          "p-8 text-sm leading-relaxed resume-content",
+          styles.layout === 'compact' && "p-6"
+        )}
+        style={{ fontFamily: styles.fontFamily }}
+      >
         {/* Render sections in order */}
         {allSections.filter(s => s.visible).map((section) => 
           renderSection(section.type, section.id)

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useResume } from '@/contexts/ResumeContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
@@ -12,12 +12,12 @@ import {
   Sparkles, 
   Loader2,
   TrendingUp,
-  MapPin,
-  Briefcase,
-  Copy
+  Briefcase
 } from 'lucide-react';
 import { invokeNetlifyFunction } from '@/lib/api';
 import { toast } from 'sonner';
+import { CardSpotlight } from '@/components/ui/aceternity/card-spotlight';
+import { MovingBorderButton } from '@/components/ui/aceternity/moving-border';
 
 interface SalaryData {
   lowRange: number;
@@ -74,183 +74,253 @@ export default function SalaryPage() {
   return (
     <DashboardLayout>
       <div className="min-h-screen">
-        <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border">
+        <motion.header 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border"
+        >
           <div className="px-6 py-4">
             <h1 className="text-2xl font-semibold text-foreground">Salary Negotiation Assistant</h1>
             <p className="text-sm text-muted-foreground">
               Get market salary data and negotiation tips based on your skills
             </p>
           </div>
-        </header>
+        </motion.header>
 
         <div className="max-w-4xl mx-auto p-6 space-y-6">
           {/* Input Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Briefcase className="h-5 w-5 text-primary" />
-                Position Details
-              </CardTitle>
-              <CardDescription>
-                Enter the role you're negotiating for
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="space-y-2">
-                  <Label htmlFor="jobTitle">Job Title</Label>
-                  <Input
-                    id="jobTitle"
-                    value={jobTitle}
-                    onChange={(e) => setJobTitle(e.target.value)}
-                    placeholder="e.g., Senior Software Engineer"
-                  />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <CardSpotlight>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Briefcase className="h-5 w-5 text-primary" />
+                  Position Details
+                </CardTitle>
+                <CardDescription>
+                  Enter the role you're negotiating for
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="jobTitle">Job Title</Label>
+                    <Input
+                      id="jobTitle"
+                      value={jobTitle}
+                      onChange={(e) => setJobTitle(e.target.value)}
+                      placeholder="e.g., Senior Software Engineer"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="location">Location</Label>
+                    <Input
+                      id="location"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      placeholder="e.g., San Francisco, CA"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="experience">Years of Experience</Label>
+                    <Input
+                      id="experience"
+                      type="number"
+                      value={yearsExperience}
+                      onChange={(e) => setYearsExperience(e.target.value)}
+                      placeholder="e.g., 5"
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
-                  <Input
-                    id="location"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="e.g., San Francisco, CA"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="experience">Years of Experience</Label>
-                  <Input
-                    id="experience"
-                    type="number"
-                    value={yearsExperience}
-                    onChange={(e) => setYearsExperience(e.target.value)}
-                    placeholder="e.g., 5"
-                  />
-                </div>
-              </div>
-              <Button 
-                onClick={handleAnalyze}
-                disabled={isAnalyzing}
-                className="w-full gap-2"
-              >
-                {isAnalyzing ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Analyzing Market Data...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="h-4 w-4" />
-                    Get Salary Insights
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
+                <MovingBorderButton
+                  borderRadius="0.5rem"
+                  className="w-full px-4 py-2 text-sm font-medium gap-2"
+                  containerClassName="h-12 w-full"
+                  onClick={handleAnalyze}
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Analyzing Market Data...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4" />
+                      Get Salary Insights
+                    </>
+                  )}
+                </MovingBorderButton>
+              </CardContent>
+            </CardSpotlight>
+          </motion.div>
 
           {/* Results */}
           {salaryData && (
             <>
               {/* Salary Range Card */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-primary" />
-                    Estimated Salary Range
-                  </CardTitle>
-                  <CardDescription>
-                    Based on your skills, experience, and location
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-4 md:grid-cols-3 text-center">
-                    <div className="p-4 rounded-lg bg-accent/30 border border-border">
-                      <p className="text-sm text-muted-foreground mb-1">Entry Level</p>
-                      <p className="text-2xl font-bold text-foreground">
-                        {formatSalary(salaryData.lowRange, salaryData.currency)}
-                      </p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <CardSpotlight>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <DollarSign className="h-5 w-5 text-primary" />
+                      Estimated Salary Range
+                    </CardTitle>
+                    <CardDescription>
+                      Based on your skills, experience, and location
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-4 md:grid-cols-3 text-center">
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.3 }}
+                        className="p-4 rounded-lg bg-accent/30 border border-border"
+                      >
+                        <p className="text-sm text-muted-foreground mb-1">Entry Level</p>
+                        <p className="text-2xl font-bold text-foreground">
+                          {formatSalary(salaryData.lowRange, salaryData.currency)}
+                        </p>
+                      </motion.div>
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.4 }}
+                        className="p-4 rounded-lg bg-primary/10 border-2 border-primary"
+                      >
+                        <p className="text-sm text-primary mb-1">Target</p>
+                        <p className="text-3xl font-bold text-primary">
+                          {formatSalary(salaryData.midRange, salaryData.currency)}
+                        </p>
+                      </motion.div>
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.5 }}
+                        className="p-4 rounded-lg bg-accent/30 border border-border"
+                      >
+                        <p className="text-sm text-muted-foreground mb-1">Senior Level</p>
+                        <p className="text-2xl font-bold text-foreground">
+                          {formatSalary(salaryData.highRange, salaryData.currency)}
+                        </p>
+                      </motion.div>
                     </div>
-                    <div className="p-4 rounded-lg bg-primary/10 border-2 border-primary">
-                      <p className="text-sm text-primary mb-1">Target</p>
-                      <p className="text-3xl font-bold text-primary">
-                        {formatSalary(salaryData.midRange, salaryData.currency)}
-                      </p>
-                    </div>
-                    <div className="p-4 rounded-lg bg-accent/30 border border-border">
-                      <p className="text-sm text-muted-foreground mb-1">Senior Level</p>
-                      <p className="text-2xl font-bold text-foreground">
-                        {formatSalary(salaryData.highRange, salaryData.currency)}
-                      </p>
-                    </div>
-                  </div>
 
-                  {/* Salary Bar */}
-                  <div className="mt-6">
-                    <div className="h-4 rounded-full bg-accent overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-accent via-primary to-primary/60"
-                        style={{ width: '100%' }}
-                      />
+                    {/* Salary Bar */}
+                    <div className="mt-6">
+                      <div className="h-4 rounded-full bg-accent overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: '100%' }}
+                          transition={{ delay: 0.6, duration: 0.8 }}
+                          className="h-full bg-gradient-to-r from-accent via-primary to-primary/60"
+                        />
+                      </div>
+                      <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                        <span>{formatSalary(salaryData.lowRange, salaryData.currency)}</span>
+                        <span>{formatSalary(salaryData.highRange, salaryData.currency)}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                      <span>{formatSalary(salaryData.lowRange, salaryData.currency)}</span>
-                      <span>{formatSalary(salaryData.highRange, salaryData.currency)}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </CardSpotlight>
+              </motion.div>
 
               {/* Factors */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-primary" />
-                    Factors Affecting Your Salary
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {salaryData.factors.map((factor, i) => (
-                      <Badge key={i} variant="secondary">{factor}</Badge>
-                    ))}
-                  </div>
-                  <Separator className="my-4" />
-                  <p className="text-sm text-muted-foreground">{salaryData.marketInsights}</p>
-                </CardContent>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <CardSpotlight>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-primary" />
+                      Factors Affecting Your Salary
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-2">
+                      {salaryData.factors.map((factor, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.4 + i * 0.05 }}
+                        >
+                          <Badge variant="secondary">{factor}</Badge>
+                        </motion.div>
+                      ))}
+                    </div>
+                    <Separator className="my-4" />
+                    <p className="text-sm text-muted-foreground">{salaryData.marketInsights}</p>
+                  </CardContent>
+                </CardSpotlight>
+              </motion.div>
 
               {/* Negotiation Tips */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Negotiation Tips</CardTitle>
-                  <CardDescription>
-                    Strategies to maximize your compensation
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {salaryData.negotiationTips.map((tip, i) => (
-                      <li key={i} className="flex gap-3 p-3 rounded-lg border border-border">
-                        <span className="flex-shrink-0 h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-medium">
-                          {i + 1}
-                        </span>
-                        <p className="text-sm text-foreground">{tip}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <CardSpotlight>
+                  <CardHeader>
+                    <CardTitle>Negotiation Tips</CardTitle>
+                    <CardDescription>
+                      Strategies to maximize your compensation
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      {salaryData.negotiationTips.map((tip, i) => (
+                        <motion.li 
+                          key={i} 
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.5 + i * 0.1 }}
+                          className="flex gap-3 p-3 rounded-lg border border-border hover:bg-accent/30 transition-colors"
+                        >
+                          <span className="flex-shrink-0 h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-medium">
+                            {i + 1}
+                          </span>
+                          <p className="text-sm text-foreground">{tip}</p>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </CardSpotlight>
+              </motion.div>
             </>
           )}
 
           {!salaryData && !isAnalyzing && (
-            <Card className="text-center py-12">
-              <CardContent>
-                <DollarSign className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-                <h3 className="text-lg font-medium text-foreground mb-2">Know Your Worth</h3>
-                <p className="text-sm text-muted-foreground">
-                  Enter a job title to get personalized salary insights
-                </p>
-              </CardContent>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <CardSpotlight className="text-center py-12">
+                <CardContent>
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <DollarSign className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
+                  </motion.div>
+                  <h3 className="text-lg font-medium text-foreground mb-2">Know Your Worth</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Enter a job title to get personalized salary insights
+                  </p>
+                </CardContent>
+              </CardSpotlight>
+            </motion.div>
           )}
         </div>
       </div>

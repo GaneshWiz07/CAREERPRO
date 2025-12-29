@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useResume } from '@/contexts/ResumeContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -25,6 +26,8 @@ import {
 } from 'lucide-react';
 import { invokeNetlifyFunction } from '@/lib/api';
 import { toast } from 'sonner';
+import { CardSpotlight } from '@/components/ui/aceternity/card-spotlight';
+import { MovingBorderButton } from '@/components/ui/aceternity/moving-border';
 
 interface AIAnalysisResult {
   score: number;
@@ -61,7 +64,6 @@ export default function AnalysisPage() {
   const [aiAnalysis, setAiAnalysis] = useState<AIAnalysisResult | null>(null);
   const [copiedItems, setCopiedItems] = useState<Set<string>>(new Set());
   const [appliedItems, setAppliedItems] = useState<Set<string>>(new Set());
-
 
   const analyzeWithAI = async () => {
     if (!jobDescription.trim()) {
@@ -123,15 +125,13 @@ export default function AnalysisPage() {
   const applyAllOptimizations = () => {
     let count = 0;
     
-    // Apply summary
     if (aiAnalysis?.optimizedContent.summary && !appliedItems.has('summary')) {
       updateSummary(aiAnalysis.optimizedContent.summary);
       setAppliedItems(prev => new Set(prev).add('summary'));
       count++;
     }
 
-    // Apply all bullets
-    aiAnalysis?.optimizedContent.experienceBullets.forEach((bullet, idx) => {
+    aiAnalysis?.optimizedContent.experienceBullets.forEach((bullet) => {
       resume.experiences.forEach((exp, expIdx) => {
         const bulletIdx = exp.bullets.findIndex(b => b === bullet.original);
         if (bulletIdx !== -1 && !appliedItems.has(`bullet-${expIdx}-${bulletIdx}`)) {
@@ -144,7 +144,6 @@ export default function AnalysisPage() {
       });
     });
 
-    // Add missing skills
     aiAnalysis?.optimizedContent.additionalSkills.forEach(skill => {
       const exists = resume.skills.some(s => s.name.toLowerCase() === skill.toLowerCase());
       if (!exists && !appliedItems.has(`skill-${skill}`)) {
@@ -157,35 +156,37 @@ export default function AnalysisPage() {
     toast.success(`Applied ${count} optimizations!`);
   };
 
-
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-primary';
     if (score >= 60) return 'text-yellow-600';
     return 'text-destructive';
   };
 
-  const getScoreBg = (score: number) => {
-    if (score >= 80) return 'bg-primary';
-    if (score >= 60) return 'bg-yellow-500';
-    return 'bg-destructive';
-  };
-
   return (
     <DashboardLayout>
       <div className="min-h-screen">
-        <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border">
+        <motion.header 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border"
+        >
           <div className="px-6 py-4">
             <h1 className="text-2xl font-semibold text-foreground">ATS Analysis</h1>
             <p className="text-sm text-muted-foreground">
               AI-powered ATS scoring with auto-optimization
             </p>
           </div>
-        </header>
+        </motion.header>
 
         <div className="p-6">
           <div className="space-y-6">
-              {/* Job Description Input */}
-              <Card>
+            {/* Job Description Input */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <CardSpotlight>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="h-5 w-5 text-primary" />
@@ -202,33 +203,39 @@ export default function AnalysisPage() {
                     placeholder="Paste the full job description here..."
                     className="min-h-[200px] resize-none"
                   />
-                  <Button 
-                    onClick={analyzeWithAI} 
-                    disabled={isAnalyzing || !jobDescription.trim()}
-                    className="w-full"
-                    size="lg"
+                  <MovingBorderButton
+                    borderRadius="0.5rem"
+                    className="w-full px-4 py-2 text-sm font-medium gap-2"
+                    containerClassName="h-12 w-full"
+                    onClick={analyzeWithAI}
                   >
                     {isAnalyzing ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin" />
                         Analyzing Resume...
                       </>
                     ) : (
                       <>
-                        <Sparkles className="mr-2 h-4 w-4" />
+                        <Sparkles className="h-4 w-4" />
                         Analyze & Optimize
                       </>
                     )}
-                  </Button>
+                  </MovingBorderButton>
                 </CardContent>
-              </Card>
+              </CardSpotlight>
+            </motion.div>
 
-              {/* AI Analysis Results */}
-              {aiAnalysis && (
-                <>
-                  {/* Score Overview */}
-                  <div className="grid gap-6 md:grid-cols-2">
-                    <Card>
+            {/* AI Analysis Results */}
+            {aiAnalysis && (
+              <>
+                {/* Score Overview */}
+                <div className="grid gap-6 md:grid-cols-2">
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <CardSpotlight>
                       <CardHeader>
                         <CardTitle>ATS Match Score</CardTitle>
                       </CardHeader>
@@ -245,10 +252,12 @@ export default function AnalysisPage() {
                                 cx="64"
                                 cy="64"
                               />
-                              <circle
+                              <motion.circle
+                                initial={{ strokeDasharray: "0 352" }}
+                                animate={{ strokeDasharray: `${aiAnalysis.score * 3.52} 352` }}
+                                transition={{ delay: 0.5, duration: 1 }}
                                 className={getScoreColor(aiAnalysis.score)}
                                 strokeWidth="8"
-                                strokeDasharray={`${aiAnalysis.score * 3.52} 352`}
                                 strokeLinecap="round"
                                 stroke="currentColor"
                                 fill="transparent"
@@ -282,9 +291,15 @@ export default function AnalysisPage() {
                           </div>
                         </div>
                       </CardContent>
-                    </Card>
+                    </CardSpotlight>
+                  </motion.div>
 
-                    <Card>
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <CardSpotlight>
                       <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle>Quick Actions</CardTitle>
                         <Button onClick={applyAllOptimizations} size="sm" className="gap-2">
@@ -322,12 +337,18 @@ export default function AnalysisPage() {
                           </div>
                         </div>
                       </CardContent>
-                    </Card>
-                  </div>
+                    </CardSpotlight>
+                  </motion.div>
+                </div>
 
-                  {/* Keywords Analysis */}
-                  <div className="grid gap-6 md:grid-cols-2">
-                    <Card>
+                {/* Keywords Analysis */}
+                <div className="grid gap-6 md:grid-cols-2">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <CardSpotlight>
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                           <CheckCircle2 className="h-5 w-5 text-primary" />
@@ -337,18 +358,31 @@ export default function AnalysisPage() {
                       <CardContent>
                         <div className="flex flex-wrap gap-2">
                           {aiAnalysis.matchedKeywords.map((keyword, i) => (
-                            <Badge key={i} variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                              {keyword}
-                            </Badge>
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: 0.5 + i * 0.03 }}
+                            >
+                              <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+                                {keyword}
+                              </Badge>
+                            </motion.div>
                           ))}
                           {aiAnalysis.matchedKeywords.length === 0 && (
                             <p className="text-sm text-muted-foreground">No matching keywords found</p>
                           )}
                         </div>
                       </CardContent>
-                    </Card>
+                    </CardSpotlight>
+                  </motion.div>
 
-                    <Card>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <CardSpotlight>
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                           <XCircle className="h-5 w-5 text-destructive" />
@@ -359,20 +393,33 @@ export default function AnalysisPage() {
                       <CardContent>
                         <div className="flex flex-wrap gap-2">
                           {aiAnalysis.missingKeywords.map((keyword, i) => (
-                            <Badge key={i} variant="outline" className="border-destructive/50 text-destructive">
-                              {keyword}
-                            </Badge>
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: 0.6 + i * 0.03 }}
+                            >
+                              <Badge variant="outline" className="border-destructive/50 text-destructive">
+                                {keyword}
+                              </Badge>
+                            </motion.div>
                           ))}
                           {aiAnalysis.missingKeywords.length === 0 && (
                             <p className="text-sm text-muted-foreground">All critical keywords covered!</p>
                           )}
                         </div>
                       </CardContent>
-                    </Card>
-                  </div>
+                    </CardSpotlight>
+                  </motion.div>
+                </div>
 
-                  {/* Optimized Content */}
-                  <Card>
+                {/* Optimized Content */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  <CardSpotlight>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-primary" />
@@ -383,7 +430,6 @@ export default function AnalysisPage() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                      {/* Optimized Summary */}
                       {aiAnalysis.optimizedContent.summary && (
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
@@ -397,11 +443,7 @@ export default function AnalysisPage() {
                                 size="sm"
                                 onClick={() => copyToClipboard(aiAnalysis.optimizedContent.summary, 'summary-copy')}
                               >
-                                {copiedItems.has('summary-copy') ? (
-                                  <Check className="h-4 w-4" />
-                                ) : (
-                                  <Copy className="h-4 w-4" />
-                                )}
+                                {copiedItems.has('summary-copy') ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                               </Button>
                               <Button
                                 size="sm"
@@ -409,15 +451,9 @@ export default function AnalysisPage() {
                                 disabled={appliedItems.has('summary')}
                               >
                                 {appliedItems.has('summary') ? (
-                                  <>
-                                    <Check className="h-4 w-4 mr-1" />
-                                    Applied
-                                  </>
+                                  <><Check className="h-4 w-4 mr-1" />Applied</>
                                 ) : (
-                                  <>
-                                    <ArrowRight className="h-4 w-4 mr-1" />
-                                    Apply
-                                  </>
+                                  <><ArrowRight className="h-4 w-4 mr-1" />Apply</>
                                 )}
                               </Button>
                             </div>
@@ -428,7 +464,6 @@ export default function AnalysisPage() {
                         </div>
                       )}
 
-                      {/* Optimized Bullets */}
                       {aiAnalysis.optimizedContent.experienceBullets.length > 0 && (
                         <div className="space-y-3">
                           <h4 className="font-medium flex items-center gap-2">
@@ -463,11 +498,7 @@ export default function AnalysisPage() {
                                         size="sm"
                                         onClick={() => copyToClipboard(bullet.optimized, `bullet-copy-${idx}`)}
                                       >
-                                        {copiedItems.has(`bullet-copy-${idx}`) ? (
-                                          <Check className="h-4 w-4" />
-                                        ) : (
-                                          <Copy className="h-4 w-4" />
-                                        )}
+                                        {copiedItems.has(`bullet-copy-${idx}`) ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                                       </Button>
                                       {expIdx !== -1 && bulletIdx !== -1 && (
                                         <Button
@@ -476,15 +507,9 @@ export default function AnalysisPage() {
                                           disabled={appliedItems.has(itemKey)}
                                         >
                                           {appliedItems.has(itemKey) ? (
-                                            <>
-                                              <Check className="h-4 w-4 mr-1" />
-                                              Applied
-                                            </>
+                                            <><Check className="h-4 w-4 mr-1" />Applied</>
                                           ) : (
-                                            <>
-                                              <ArrowRight className="h-4 w-4 mr-1" />
-                                              Apply
-                                            </>
+                                            <><ArrowRight className="h-4 w-4 mr-1" />Apply</>
                                           )}
                                         </Button>
                                       )}
@@ -497,7 +522,6 @@ export default function AnalysisPage() {
                         </div>
                       )}
 
-                      {/* Additional Skills */}
                       {aiAnalysis.optimizedContent.additionalSkills.length > 0 && (
                         <div className="space-y-3">
                           <h4 className="font-medium flex items-center gap-2">
@@ -528,11 +552,17 @@ export default function AnalysisPage() {
                         </div>
                       )}
                     </CardContent>
-                  </Card>
+                  </CardSpotlight>
+                </motion.div>
 
-                  {/* Recommendations */}
-                  {aiAnalysis.recommendations.length > 0 && (
-                    <Card>
+                {/* Recommendations */}
+                {aiAnalysis.recommendations.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                  >
+                    <CardSpotlight>
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                           <Target className="h-5 w-5 text-primary" />
@@ -542,21 +572,33 @@ export default function AnalysisPage() {
                       <CardContent>
                         <ul className="space-y-3">
                           {aiAnalysis.recommendations.map((rec, i) => (
-                            <li key={i} className="flex items-start gap-3 p-3 rounded-lg bg-accent/50">
+                            <motion.li 
+                              key={i} 
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.8 + i * 0.1 }}
+                              className="flex items-start gap-3 p-3 rounded-lg bg-accent/50"
+                            >
                               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
                                 {i + 1}
                               </span>
                               <p className="text-sm">{rec}</p>
-                            </li>
+                            </motion.li>
                           ))}
                         </ul>
                       </CardContent>
-                    </Card>
-                  )}
+                    </CardSpotlight>
+                  </motion.div>
+                )}
 
-                  {/* AI-detected Issues */}
-                  {aiAnalysis.issues.length > 0 && (
-                    <Card>
+                {/* Issues */}
+                {aiAnalysis.issues.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 }}
+                  >
+                    <CardSpotlight>
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                           <AlertTriangle className="h-5 w-5 text-yellow-600" />
@@ -592,10 +634,11 @@ export default function AnalysisPage() {
                           </div>
                         ))}
                       </CardContent>
-                    </Card>
-                  )}
-                </>
-              )}
+                    </CardSpotlight>
+                  </motion.div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>

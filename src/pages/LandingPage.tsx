@@ -124,7 +124,7 @@ export default function LandingPage() {
   const words = ["Create", "Optimize", "Tailor", "Perfect"];
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-32 md:pt-20">
         <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" />

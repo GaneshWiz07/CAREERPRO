@@ -126,7 +126,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background overflow-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center px-4">
+      <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-32 md:pt-20">
         <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" />
         <BackgroundBeams className="absolute inset-0" />
 
@@ -139,7 +139,7 @@ export default function LandingPage() {
             <span className="text-xl font-bold text-foreground">CareerPro</span>
           </Link>
           <div className="flex items-center gap-4">
-            <Link to="/editor">
+            <Link to="/editor" className="hidden md:block">
               <Button variant="ghost">Dashboard</Button>
             </Link>
             <Link to="/editor">
@@ -148,7 +148,8 @@ export default function LandingPage() {
                 className="px-4 py-2 text-sm font-medium"
                 containerClassName="h-10 w-auto"
               >
-                Get Started Free
+                <span className="hidden sm:inline">Get Started Free</span>
+                <span className="sm:hidden">Get Started</span>
               </MovingBorderButton>
             </Link>
           </div>
@@ -160,10 +161,10 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-6"
+            className="mb-8 mt-8 md:mt-0"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card/50 backdrop-blur-sm text-sm text-muted-foreground">
-              <Wand2 className="h-4 w-4 text-primary" />
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card/50 backdrop-blur-sm text-sm text-muted-foreground text-center">
+              <Wand2 className="h-4 w-4 text-primary shrink-0" />
               AI-Powered Resume Building Tool
             </span>
           </motion.div>

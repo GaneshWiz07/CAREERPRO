@@ -17,7 +17,7 @@ import {
   Target,
   Clock
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { invokeNetlifyFunction } from '@/lib/api';
 import { toast } from 'sonner';
 
 interface InterviewQuestion {
@@ -41,15 +41,13 @@ export default function InterviewPage() {
 
     setIsGenerating(true);
     try {
-      const { data, error } = await supabase.functions.invoke('generate-interview-questions', {
-        body: {
-          jobTitle,
-          jobDescription,
-          resume: {
-            summary: resume.summary,
-            experiences: resume.experiences,
-            skills: resume.skills,
-          },
+      const { data, error } = await invokeNetlifyFunction('generate-interview-questions', {
+        jobTitle,
+        jobDescription,
+        resume: {
+          summary: resume.summary,
+          experiences: resume.experiences,
+          skills: resume.skills,
         },
       });
 

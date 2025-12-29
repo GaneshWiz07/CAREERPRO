@@ -19,7 +19,7 @@ import {
   Copy,
   FileText
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { invokeNetlifyFunction } from '@/lib/api';
 import { toast } from 'sonner';
 
 interface TailorResult {
@@ -51,17 +51,15 @@ export default function TailorPage() {
 
     setIsAnalyzing(true);
     try {
-      const { data, error } = await supabase.functions.invoke('tailor-resume', {
-        body: {
-          jobDescription,
-          jobTitle,
-          company,
-          resume: {
-            summary: resume.summary,
-            experiences: resume.experiences,
-            skills: resume.skills,
-            education: resume.education,
-          },
+      const { data, error } = await invokeNetlifyFunction('tailor-resume', {
+        jobDescription,
+        jobTitle,
+        company,
+        resume: {
+          summary: resume.summary,
+          experiences: resume.experiences,
+          skills: resume.skills,
+          education: resume.education,
         },
       });
 

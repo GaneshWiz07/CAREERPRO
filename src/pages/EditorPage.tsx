@@ -24,10 +24,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { 
-  Save, 
-  Download, 
-  Eye, 
+import {
+  Save,
+  Download,
+  Eye,
   Edit3,
   Loader2,
   Upload,
@@ -134,7 +134,7 @@ export default function EditorPage() {
   return (
     <DashboardLayout>
       <div className="min-h-screen">
-        <motion.header 
+        <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border"
@@ -153,43 +153,45 @@ export default function EditorPage() {
                 className="hidden"
               />
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button 
-                  variant="outline" 
-                  className="gap-2" 
+                <Button
+                  variant="outline"
+                  className="gap-2"
                   onClick={handleImportClick}
                   disabled={isImporting}
+                  size="sm"
                 >
                   {isImporting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <Upload className="h-4 w-4" />
                   )}
-                  Import
+                  <span className="hidden sm:inline">Import</span>
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button 
-                  variant="outline" 
-                  className="gap-2" 
+                <Button
+                  variant="outline"
+                  className="gap-2"
                   disabled={isExporting}
                   onClick={openExportDialog}
+                  size="sm"
                 >
                   {isExporting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <Download className="h-4 w-4" />
                   )}
-                  Export PDF
+                  <span className="hidden sm:inline">Export PDF</span>
                 </Button>
               </motion.div>
               <MovingBorderButton
                 borderRadius="0.5rem"
                 className="px-4 py-2 text-sm font-medium gap-2"
-                containerClassName="h-10 w-auto"
+                containerClassName="h-9 w-auto"
                 onClick={handleSave}
               >
                 <Save className="h-4 w-4" />
-                Save
+                <span className="hidden sm:inline">Save</span>
               </MovingBorderButton>
             </div>
           </div>
@@ -230,7 +232,7 @@ export default function EditorPage() {
                     <SectionReorder />
                   </CardSpotlight>
                 </motion.div>
-                
+
                 {/* Render sections in order, excluding custom */}
                 {allSections
                   .filter(s => s.visible && s.type !== 'custom')
@@ -244,7 +246,7 @@ export default function EditorPage() {
                       {renderEditSection(section.type)}
                     </motion.div>
                   ))}
-                
+
                 {/* Custom sections */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -257,7 +259,7 @@ export default function EditorPage() {
             </TabsContent>
 
             <TabsContent value="template">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="max-w-4xl mx-auto"

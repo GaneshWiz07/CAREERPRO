@@ -1,7 +1,5 @@
+**LIVE SITE -** [https://careerpro-ats.netlify.app](https://careerpro-ats.netlify.app)
 # 🚀 CareerPro - AI-Powered Resume Builder
-
-![CareerPro Banner](public/placeholder.svg)
-
 **CareerPro** is an intelligent, full-stack resume building application designed to help job seekers pass Applicant Tracking Systems (ATS) and land more interviews. By leveraging the power of **Groq AI (Llama 3)**, it offers real-time analysis, content enhancement, and personalized tailoring for every job application.
 
 ---

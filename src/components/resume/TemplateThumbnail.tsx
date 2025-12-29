@@ -69,25 +69,6 @@ export function TemplateThumbnail({ templateId, className }: TemplateThumbnailPr
           </div>
         );
 
-      case 'executive':
-        return (
-          <div className="w-full h-full bg-white p-2 flex flex-col" style={{ fontFamily: 'serif' }}>
-            {/* Formal header - thick border */}
-            <div className="text-center mb-2 border-b-2 border-gray-800 pb-1.5">
-              <div className="h-3 w-20 bg-gray-900 rounded-sm mx-auto mb-1" />
-              <div className="h-1 w-16 bg-gray-500 rounded-sm mx-auto" />
-            </div>
-            {/* Formal sections with top & bottom borders */}
-            <div className="mb-1.5">
-              <div className="h-1.5 w-14 bg-gray-800 mb-1 border-t-2 border-b border-gray-800 py-0.5 uppercase tracking-[0.15em]" />
-              <div className="h-1 w-full bg-gray-300 rounded-sm" />
-            </div>
-            <div>
-              <div className="h-1.5 w-16 bg-gray-800 mb-1 border-t-2 border-b border-gray-800 py-0.5" />
-              <div className="h-1 w-full bg-gray-300 rounded-sm" />
-            </div>
-          </div>
-        );
 
 
       default:

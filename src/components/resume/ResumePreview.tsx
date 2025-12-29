@@ -35,14 +35,6 @@ const TEMPLATE_STYLES: Record<string, {
     accentColor: '#2563eb',
     layout: 'modern',
   },
-  executive: {
-    fontFamily: "'Merriweather', serif",
-    headerStyle: "text-center border-b-2 border-gray-800 pb-4 mb-5",
-    sectionHeaderStyle: "text-xs font-bold uppercase tracking-[0.2em] border-b-2 border-gray-800 pb-1 mb-3",
-    nameStyle: "text-3xl font-bold tracking-wide mb-2",
-    bodyStyle: "text-xs leading-relaxed",
-    layout: 'classic',
-  },
 };
 
 // Check if content is empty (handles both plain text and HTML)

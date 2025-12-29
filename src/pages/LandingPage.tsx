@@ -23,6 +23,7 @@ import { CardSpotlight } from "@/components/ui/aceternity/card-spotlight";
 import { MovingBorderButton } from "@/components/ui/aceternity/moving-border";
 import { BackgroundBeams } from "@/components/ui/aceternity/background-beams";
 import { HoverEffect } from "@/components/ui/aceternity/card-hover-effect";
+import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 
 const features = [
   {
@@ -366,6 +367,7 @@ export default function LandingPage() {
           </p>
         </div>
       </footer>
+      <ScrollToTopButton />
     </div>
   );
 }

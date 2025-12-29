@@ -1,6 +1,6 @@
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
-import { invokeNetlifyFunction } from '@/lib/api';
+import { supabase } from '@/integrations/supabase/client';
 
 // Use the CDN worker for pdfjs-dist
 const PDFJS_VERSION = '4.4.168';
@@ -69,8 +69,8 @@ function generateId(): string {
 async function parseWithGroq(text: string): Promise<ParsedResume> {
   console.log('Sending resume text to Groq for parsing...');
   
-  const { data, error } = await invokeNetlifyFunction('parse-resume', {
-    resumeText: text
+  const { data, error } = await supabase.functions.invoke('parse-resume', {
+    body: { resumeText: text }
   });
 
   if (error) {

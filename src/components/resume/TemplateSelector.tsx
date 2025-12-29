@@ -34,15 +34,6 @@ const TEMPLATES: ResumeTemplate[] = [
     features: ['Modern typography', 'Bold headers', 'Clean lines'],
     bestFor: 'Tech & Startups',
   },
-  {
-    id: 'executive',
-    name: 'Executive',
-    description: 'Sophisticated layout with Times New Roman. Perfect for senior roles and traditional industries.',
-    font: 'Times New Roman',
-    atsScore: 99,
-    features: ['Traditional style', 'Formal tone', 'Highly compatible'],
-    bestFor: 'Senior Roles',
-  },
 ];
 
 interface TemplateSelectorProps {
@@ -63,7 +54,7 @@ export function TemplateSelector({ selectedTemplate, onSelectTemplate }: Templat
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="flex justify-center gap-4">
           {TEMPLATES.map((template) => (
             <button
               key={template.id}

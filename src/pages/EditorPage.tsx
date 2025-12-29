@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { ContactSection } from '@/components/resume/ContactSection';
 import { SummarySection } from '@/components/resume/SummarySection';
@@ -35,6 +36,8 @@ import {
 import { toast } from 'sonner';
 import { exportToPDF } from '@/lib/export';
 import { parseResume } from '@/lib/resumeParser';
+import { CardSpotlight } from '@/components/ui/aceternity/card-spotlight';
+import { MovingBorderButton } from '@/components/ui/aceternity/moving-border';
 
 export default function EditorPage() {
   const { resume, updateResume, saveResume, importResumeData } = useResume();
@@ -131,7 +134,11 @@ export default function EditorPage() {
   return (
     <DashboardLayout>
       <div className="min-h-screen">
-        <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border">
+        <motion.header 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border"
+        >
           <div className="flex items-center justify-between px-6 py-4">
             <div>
               <h1 className="text-2xl font-semibold text-foreground">{resume.name}</h1>
@@ -145,74 +152,116 @@ export default function EditorPage() {
                 accept=".pdf,.doc,.docx"
                 className="hidden"
               />
-              <Button 
-                variant="outline" 
-                className="gap-2" 
-                onClick={handleImportClick}
-                disabled={isImporting}
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button 
+                  variant="outline" 
+                  className="gap-2" 
+                  onClick={handleImportClick}
+                  disabled={isImporting}
+                >
+                  {isImporting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Upload className="h-4 w-4" />
+                  )}
+                  Import
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button 
+                  variant="outline" 
+                  className="gap-2" 
+                  disabled={isExporting}
+                  onClick={openExportDialog}
+                >
+                  {isExporting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
+                  Export PDF
+                </Button>
+              </motion.div>
+              <MovingBorderButton
+                borderRadius="0.5rem"
+                className="px-4 py-2 text-sm font-medium gap-2"
+                containerClassName="h-10 w-auto"
+                onClick={handleSave}
               >
-                {isImporting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Upload className="h-4 w-4" />
-                )}
-                Import
-              </Button>
-              <Button 
-                variant="outline" 
-                className="gap-2" 
-                disabled={isExporting}
-                onClick={openExportDialog}
-              >
-                {isExporting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4" />
-                )}
-                Export PDF
-              </Button>
-              <Button onClick={handleSave} className="gap-2">
                 <Save className="h-4 w-4" />
                 Save
-              </Button>
+              </MovingBorderButton>
             </div>
           </div>
-        </header>
+        </motion.header>
 
         <div className="p-6">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'edit' | 'preview' | 'template')}>
-            <TabsList className="mb-6">
-              <TabsTrigger value="edit" className="gap-2">
-                <Edit3 className="h-4 w-4" />
-                Edit
-              </TabsTrigger>
-              <TabsTrigger value="template" className="gap-2">
-                <Palette className="h-4 w-4" />
-                Template
-              </TabsTrigger>
-              <TabsTrigger value="preview" className="gap-2">
-                <Eye className="h-4 w-4" />
-                Preview
-              </TabsTrigger>
-            </TabsList>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <TabsList className="mb-6">
+                <TabsTrigger value="edit" className="gap-2">
+                  <Edit3 className="h-4 w-4" />
+                  Edit
+                </TabsTrigger>
+                <TabsTrigger value="template" className="gap-2">
+                  <Palette className="h-4 w-4" />
+                  Template
+                </TabsTrigger>
+                <TabsTrigger value="preview" className="gap-2">
+                  <Eye className="h-4 w-4" />
+                  Preview
+                </TabsTrigger>
+              </TabsList>
+            </motion.div>
 
             <TabsContent value="edit">
               <div className="max-w-4xl mx-auto space-y-6">
                 {/* Section Reorder Card */}
-                <SectionReorder />
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                >
+                  <CardSpotlight className="p-0">
+                    <SectionReorder />
+                  </CardSpotlight>
+                </motion.div>
                 
                 {/* Render sections in order, excluding custom */}
                 {allSections
                   .filter(s => s.visible && s.type !== 'custom')
-                  .map(section => renderEditSection(section.type))}
+                  .map((section, index) => (
+                    <motion.div
+                      key={section.type}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 + index * 0.05 }}
+                    >
+                      {renderEditSection(section.type)}
+                    </motion.div>
+                  ))}
                 
                 {/* Custom sections */}
-                <CustomSectionsSection />
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <CustomSectionsSection />
+                </motion.div>
               </div>
             </TabsContent>
 
             <TabsContent value="template">
-              <div className="max-w-4xl mx-auto">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="max-w-4xl mx-auto"
+              >
                 <TemplateSelector
                   selectedTemplate={resume.templateId || 'classic'}
                   onSelectTemplate={(templateId) => {
@@ -220,11 +269,16 @@ export default function EditorPage() {
                     toast.success('Template updated!');
                   }}
                 />
-              </div>
+              </motion.div>
             </TabsContent>
 
             <TabsContent value="preview">
-              <PaginatedPreview resume={resume} />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+              >
+                <PaginatedPreview resume={resume} />
+              </motion.div>
             </TabsContent>
           </Tabs>
         </div>

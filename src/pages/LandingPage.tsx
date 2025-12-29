@@ -10,18 +10,17 @@ import {
   MessageSquare,
   DollarSign,
   ArrowRight,
-  CheckCircle2,
-  Star,
+  Wand2,
+  Zap,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Spotlight } from "@/components/ui/aceternity/spotlight";
 import { FlipWords } from "@/components/ui/aceternity/flip-words";
 import { BentoGrid, BentoGridItem } from "@/components/ui/aceternity/bento-grid";
-import { InfiniteMovingCards } from "@/components/ui/aceternity/infinite-moving-cards";
 import { LampContainer } from "@/components/ui/aceternity/lamp";
 import { CardSpotlight } from "@/components/ui/aceternity/card-spotlight";
 import { MovingBorderButton } from "@/components/ui/aceternity/moving-border";
-import { SparklesCore } from "@/components/ui/aceternity/sparkles";
 import { BackgroundBeams } from "@/components/ui/aceternity/background-beams";
 
 const features = [
@@ -97,49 +96,16 @@ const features = [
   },
 ];
 
-const testimonials = [
-  {
-    quote:
-      "This tool helped me land my dream job at Google. The ATS optimization alone is worth its weight in gold!",
-    name: "Sarah Chen",
-    title: "Software Engineer at Google",
-  },
-  {
-    quote:
-      "I went from getting zero callbacks to 5 interviews in my first week. The job tailoring feature is a game-changer.",
-    name: "Michael Roberts",
-    title: "Product Manager at Meta",
-  },
-  {
-    quote:
-      "The achievement transformer took my boring resume and made it pop. Recruiters now actually read my applications!",
-    name: "Emily Watson",
-    title: "Marketing Director at Stripe",
-  },
-  {
-    quote:
-      "Finally, a resume tool that actually understands what ATS systems want. My application success rate tripled.",
-    name: "David Park",
-    title: "Data Scientist at Netflix",
-  },
-  {
-    quote:
-      "The interview coach prepared me for questions I never would have thought of. Landed a 40% salary increase!",
-    name: "Jessica Martinez",
-    title: "Senior Designer at Apple",
-  },
-];
-
 const steps = [
   {
     number: "01",
     title: "Upload or Create",
-    description: "Start with your existing resume or build one from scratch with our templates.",
+    description: "Import your existing resume or start fresh with our professional templates.",
   },
   {
     number: "02",
     title: "Optimize & Tailor",
-    description: "Let AI analyze and enhance your resume for your target role.",
+    description: "AI analyzes and enhances your resume for any job description.",
   },
   {
     number: "03",
@@ -149,12 +115,12 @@ const steps = [
   {
     number: "04",
     title: "Land Your Dream Job",
-    description: "Apply with confidence and watch the interviews roll in.",
+    description: "Apply with confidence using your optimized, ATS-ready resume.",
   },
 ];
 
 export default function LandingPage() {
-  const words = ["Build", "Perfect", "Tailor", "Transform"];
+  const words = ["Create", "Optimize", "Tailor", "Perfect"];
 
   return (
     <div className="min-h-screen bg-background overflow-hidden">
@@ -196,8 +162,8 @@ export default function LandingPage() {
             className="mb-6"
           >
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card/50 backdrop-blur-sm text-sm text-muted-foreground">
-              <Star className="h-4 w-4 text-primary" />
-              Trusted by 10,000+ job seekers worldwide
+              <Wand2 className="h-4 w-4 text-primary" />
+              AI-Powered Resume Building Tool
             </span>
           </motion.div>
 
@@ -218,8 +184,8 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8"
           >
-            The all-in-one AI-powered platform to create, optimize, and tailor your resume 
-            for any job. Land more interviews and negotiate better offers.
+            The complete AI toolkit for building ATS-optimized resumes, tailoring for any job, 
+            and preparing for interviews. Everything you need in one powerful platform.
           </motion.p>
 
           <motion.div
@@ -230,7 +196,7 @@ export default function LandingPage() {
           >
             <Link to="/editor">
               <Button size="lg" className="text-lg px-8 py-6 group">
-                Start Building for Free
+                Open Resume Editor
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
@@ -241,7 +207,7 @@ export default function LandingPage() {
             </Link>
           </motion.div>
 
-          {/* Quick Stats */}
+          {/* Feature Highlights */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -249,13 +215,15 @@ export default function LandingPage() {
             className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto"
           >
             {[
-              { value: "10K+", label: "Resumes Created" },
-              { value: "95%", label: "ATS Pass Rate" },
-              { value: "3x", label: "More Interviews" },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-foreground">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+              { icon: Zap, label: "Instant ATS Analysis" },
+              { icon: Target, label: "Job-Specific Tailoring" },
+              { icon: Shield, label: "Interview Preparation" },
+            ].map((item) => (
+              <div key={item.label} className="text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-2">
+                  <item.icon className="h-6 w-6 text-primary" />
+                </div>
+                <div className="text-sm text-muted-foreground">{item.label}</div>
               </div>
             ))}
           </motion.div>
@@ -289,10 +257,10 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-              Everything You Need to Land Your Dream Job
+              Complete Resume Toolkit
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              From resume creation to salary negotiation, we've got you covered at every step.
+              Seven powerful AI tools to create, optimize, and perfect your resume for any opportunity.
             </p>
           </motion.div>
 
@@ -322,10 +290,10 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-              Your Path to Success
+              How It Works
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Four simple steps to transform your job search and career trajectory.
+              Four simple steps to create a job-winning resume.
             </p>
           </motion.div>
 
@@ -349,30 +317,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-24 overflow-hidden">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="text-center mb-12 px-4"
-        >
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Loved by Job Seekers Everywhere
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Join thousands of professionals who've transformed their careers with CareerPro.
-          </p>
-        </motion.div>
-
-        <InfiniteMovingCards
-          items={testimonials}
-          direction="right"
-          speed="slow"
-        />
-      </section>
-
       {/* CTA Section */}
       <LampContainer>
         <motion.h2
@@ -385,7 +329,7 @@ export default function LandingPage() {
           }}
           className="mt-8 bg-gradient-to-br from-foreground to-muted-foreground py-4 bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl"
         >
-          Ready to Transform <br /> Your Career?
+          Ready to Build Your <br /> Perfect Resume?
         </motion.h2>
         <motion.div
           initial={{ opacity: 0 }}
@@ -395,7 +339,7 @@ export default function LandingPage() {
         >
           <Link to="/editor">
             <Button size="lg" className="text-lg px-8 py-6">
-              Get Started Free
+              Start Building Now
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
@@ -413,7 +357,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <Link to="/editor" className="hover:text-foreground transition-colors">
-              Dashboard
+              Resume Editor
             </Link>
             <Link to="/analysis" className="hover:text-foreground transition-colors">
               ATS Analysis

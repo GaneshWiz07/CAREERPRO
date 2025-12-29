@@ -13,7 +13,7 @@ import {
   Lightbulb,
   TrendingUp
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { invokeNetlifyFunction } from '@/lib/api';
 import { toast } from 'sonner';
 
 export default function AchievementsPage() {
@@ -30,12 +30,10 @@ export default function AchievementsPage() {
 
     setIsTransforming(true);
     try {
-      const { data, error } = await supabase.functions.invoke('transform-achievement', {
-        body: {
-          bullet: inputBullet,
-          role: 'Professional',
-          company: 'Company',
-        },
+      const { data, error } = await invokeNetlifyFunction('transform-achievement', {
+        bullet: inputBullet,
+        role: 'Professional',
+        company: 'Company',
       });
 
       if (error) throw error;

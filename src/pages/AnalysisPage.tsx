@@ -23,7 +23,7 @@ import {
   Award,
   Briefcase
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { invokeNetlifyFunction } from '@/lib/api';
 import { toast } from 'sonner';
 
 interface AIAnalysisResult {
@@ -71,8 +71,8 @@ export default function AnalysisPage() {
 
     setIsAnalyzing(true);
     try {
-      const { data, error } = await supabase.functions.invoke('analyze-ats', {
-        body: { resume, jobDescription }
+      const { data, error } = await invokeNetlifyFunction('analyze-ats', {
+        resume, jobDescription
       });
 
       if (error) throw error;

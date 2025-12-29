@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, Sparkles, Loader2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { invokeNetlifyFunction } from '@/lib/api';
 import { toast } from 'sonner';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
 
@@ -25,12 +25,10 @@ export function SummarySection() {
 
     setIsEnhancing(true);
     try {
-      const { data, error } = await supabase.functions.invoke('enhance-summary', {
-        body: { 
-          summary: plainText,
-          experiences: resume.experiences,
-          skills: resume.skills,
-        },
+      const { data, error } = await invokeNetlifyFunction('enhance-summary', {
+        summary: plainText,
+        experiences: resume.experiences,
+        skills: resume.skills,
       });
 
       if (error) throw error;

@@ -16,7 +16,7 @@ import {
   Briefcase,
   Copy
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { invokeNetlifyFunction } from '@/lib/api';
 import { toast } from 'sonner';
 
 interface SalaryData {
@@ -45,13 +45,11 @@ export default function SalaryPage() {
 
     setIsAnalyzing(true);
     try {
-      const { data, error } = await supabase.functions.invoke('salary-analysis', {
-        body: {
-          jobTitle,
-          location: location || 'United States',
-          yearsExperience: parseInt(yearsExperience) || 5,
-          skills: resume.skills.map(s => s.name),
-        },
+      const { data, error } = await invokeNetlifyFunction('salary-analysis', {
+        jobTitle,
+        location: location || 'United States',
+        yearsExperience: parseInt(yearsExperience) || 5,
+        skills: resume.skills.map(s => s.name),
       });
 
       if (error) throw error;

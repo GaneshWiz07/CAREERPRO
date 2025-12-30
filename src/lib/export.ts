@@ -59,6 +59,29 @@ const TEMPLATE_FONTS: Record<
   },
   tokyo: { name: "Noto Sans", family: "sans-serif", weights: "400;600;700" },
   fresh: { name: "DM Sans", family: "sans-serif", weights: "400;500;600;700" },
+  // 10 New Templates
+  aurora: { name: "Outfit", family: "sans-serif", weights: "400;500;600;700" },
+  berlin: { name: "Oswald", family: "sans-serif", weights: "400;500;600;700" },
+  cambridge: {
+    name: "EB Garamond",
+    family: "serif",
+    weights: "400;500;600;700",
+  },
+  dubai: { name: "Bodoni Moda", family: "serif", weights: "400;500;600;700" },
+  ember: { name: "Rubik", family: "sans-serif", weights: "400;500;600;700" },
+  fortune: { name: "Crimson Pro", family: "serif", weights: "400;500;600;700" },
+  glacier: { name: "Cabin", family: "sans-serif", weights: "400;500;600;700" },
+  harmony: { name: "Karla", family: "sans-serif", weights: "400;500;600;700" },
+  iconic: {
+    name: "Barlow",
+    family: "sans-serif",
+    weights: "400;500;600;700;800",
+  },
+  jasper: {
+    name: "Josefin Sans",
+    family: "sans-serif",
+    weights: "400;500;600;700",
+  },
 };
 
 // Template accent colors
@@ -80,6 +103,17 @@ const TEMPLATE_COLORS: Record<string, string> = {
   nordic: "#0d9488",
   tokyo: "#dc2626",
   fresh: "#65a30d",
+  // 10 New Templates
+  aurora: "#7c3aed",
+  berlin: "#1f2937",
+  cambridge: "#166534",
+  dubai: "#b45309",
+  ember: "#e11d48",
+  fortune: "#881337",
+  glacier: "#0891b2",
+  harmony: "#9333ea",
+  iconic: "#eab308",
+  jasper: "#c2410c",
 };
 
 /**
@@ -126,6 +160,17 @@ export async function exportToPDF(
       case "contact":
         return `
           <header class="contact-header">
+            ${
+              resume.contact.profilePicture
+                ? `
+              <div class="profile-picture-container">
+                <img src="${resume.contact.profilePicture}" alt="${
+                    resume.contact.fullName || "Profile"
+                  }" class="profile-picture" />
+              </div>
+            `
+                : ""
+            }
             <h1 class="name">${resume.contact.fullName || "Your Name"}</h1>
             <div class="contact-info">
               ${[
@@ -371,6 +416,21 @@ export async function exportToPDF(
       margin-bottom: 12pt;
       border-bottom: 2px solid ${accentColor};
       break-inside: avoid;
+    }
+
+    /* Profile Picture */
+    .profile-picture-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10pt;
+    }
+
+    .profile-picture {
+      width: 70pt;
+      height: 70pt;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2pt solid ${accentColor};
     }
 
     .name {
@@ -691,8 +751,8 @@ export function exportToText(resume: Resume): string {
       exp.bullets
         .filter((b) => !isEmptyContent(b))
         .forEach((bullet) => {
-        lines.push(`  • ${stripHtml(bullet)}`);
-      });
+          lines.push(`  • ${stripHtml(bullet)}`);
+        });
       lines.push("");
     });
   }
@@ -761,8 +821,8 @@ export function exportToText(resume: Resume): string {
         item.bullets
           .filter((b) => !isEmptyContent(b))
           .forEach((bullet) => {
-          lines.push(`  • ${stripHtml(bullet)}`);
-        });
+            lines.push(`  • ${stripHtml(bullet)}`);
+          });
         lines.push("");
       });
     });

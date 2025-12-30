@@ -77,37 +77,37 @@ export default function ResumesPage() {
     <DashboardLayout>
       <div className="min-h-screen">
         <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border">
-          <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-6 py-3 sm:py-4">
             <div>
-              <h1 className="text-2xl font-semibold text-foreground">My Resumes</h1>
-              <p className="text-sm text-muted-foreground">
-                Manage your resume versions and tailored copies
+              <h1 className="text-xl sm:text-2xl font-semibold text-foreground">My Resumes</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Manage your resume versions
               </p>
             </div>
-            <Button onClick={handleCreate} className="gap-2">
+            <Button onClick={handleCreate} className="gap-2 h-9 sm:h-10 text-sm w-full sm:w-auto">
               <Plus className="h-4 w-4" />
               New Resume
             </Button>
           </div>
         </header>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {resumes.length === 0 ? (
             <Card className="max-w-md mx-auto">
-              <CardContent className="py-12 text-center">
-                <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-                <h3 className="text-lg font-medium text-foreground mb-2">No Resumes Yet</h3>
-                <p className="text-sm text-muted-foreground mb-4">
+              <CardContent className="py-8 sm:py-12 text-center">
+                <FileText className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-muted-foreground opacity-50" />
+                <h3 className="text-base sm:text-lg font-medium text-foreground mb-2">No Resumes Yet</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground mb-4">
                   Create your first resume to get started
                 </p>
-                <Button onClick={handleCreate}>
+                <Button onClick={handleCreate} className="h-9 sm:h-10 text-sm">
                   <Plus className="h-4 w-4 mr-2" />
                   Create Resume
                 </Button>
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {resumes.map((r) => (
                 <Card 
                   key={r.id} 
@@ -115,18 +115,18 @@ export default function ResumesPage() {
                     r.id === resume.id ? 'border-primary' : ''
                   }`}
                 >
-                  <CardHeader className="pb-3">
+                  <CardHeader className="pb-2 sm:pb-3">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
-                        <CardTitle className="text-lg truncate">{r.name}</CardTitle>
-                        <CardDescription className="flex items-center gap-1 mt-1">
+                        <CardTitle className="text-base sm:text-lg truncate">{r.name}</CardTitle>
+                        <CardDescription className="flex items-center gap-1 mt-1 text-xs">
                           <Calendar className="h-3 w-3" />
                           Updated {formatDate(r.updatedAt)}
                         </CardDescription>
                       </div>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -149,16 +149,16 @@ export default function ResumesPage() {
                                 Delete
                               </DropdownMenuItem>
                             </AlertDialogTrigger>
-                            <AlertDialogContent>
+                            <AlertDialogContent className="max-w-[90vw] sm:max-w-lg">
                               <AlertDialogHeader>
                                 <AlertDialogTitle>Delete Resume?</AlertDialogTitle>
-                                <AlertDialogDescription>
+                                <AlertDialogDescription className="text-sm">
                                   This action cannot be undone. This will permanently delete "{r.name}".
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDelete(r.id)}>
+                              <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                                <AlertDialogCancel className="w-full sm:w-auto">Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDelete(r.id)} className="w-full sm:w-auto">
                                   Delete
                                 </AlertDialogAction>
                               </AlertDialogFooter>
@@ -169,25 +169,25 @@ export default function ResumesPage() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-2">
+                    <div className="space-y-1.5 sm:space-y-2">
                       <p className="text-sm text-foreground font-medium truncate">
                         {r.contact.fullName || 'No name set'}
                       </p>
                       <p className="text-xs text-muted-foreground truncate">
                         {r.contact.email || 'No email set'}
                       </p>
-                      <div className="flex flex-wrap gap-1 pt-2">
-                        <Badge variant="secondary" className="text-xs">
-                          {r.experiences.length} Experiences
+                      <div className="flex flex-wrap gap-1 pt-1.5 sm:pt-2">
+                        <Badge variant="secondary" className="text-[10px] sm:text-xs">
+                          {r.experiences.length} Exp
                         </Badge>
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-[10px] sm:text-xs">
                           {r.skills.length} Skills
                         </Badge>
                       </div>
                     </div>
                     <Button 
                       variant="outline" 
-                      className="w-full mt-4"
+                      className="w-full mt-3 sm:mt-4 h-8 sm:h-9 text-sm"
                       onClick={() => handleLoad(r.id)}
                     >
                       Open Resume

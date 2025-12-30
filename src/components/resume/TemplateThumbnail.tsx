@@ -394,6 +394,177 @@ export function TemplateThumbnail({ templateId, className }: TemplateThumbnailPr
           </div>
         );
 
+      // 10 New Template Thumbnails
+      case 'aurora':
+        return (
+          <div className="w-full h-full bg-white p-2 flex flex-col" style={{ fontFamily: 'sans-serif' }}>
+            <div className="mb-2 pb-1.5 border-b-2 border-violet-500 text-center">
+              <div className="h-2.5 w-18 bg-violet-800 rounded-sm mb-1 mx-auto" />
+              <div className="h-1 w-16 bg-violet-400 rounded-sm mx-auto" />
+            </div>
+            <div className="mb-1.5">
+              <div className="h-1.5 w-12 bg-violet-600 mb-1" />
+              <div className="space-y-0.5">
+                <div className="h-1 w-full bg-violet-100 rounded-sm" />
+                <div className="h-1 w-4/5 bg-violet-100 rounded-sm" />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'berlin':
+        return (
+          <div className="w-full h-full bg-white p-2 flex flex-col" style={{ fontFamily: 'sans-serif' }}>
+            <div className="mb-2 pb-1.5 border-b-4 border-gray-800 text-center">
+              <div className="h-3 w-20 bg-gray-900 mb-1 mx-auto" />
+              <div className="h-1 w-16 bg-gray-600 mx-auto" />
+            </div>
+            <div className="mb-1.5">
+              <div className="h-2 w-14 bg-gray-800 mb-1 px-1" />
+              <div className="space-y-0.5">
+                <div className="h-1 w-full bg-gray-200" />
+                <div className="h-1 w-5/6 bg-gray-200" />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'cambridge':
+        return (
+          <div className="w-full h-full bg-white p-2 flex flex-col" style={{ fontFamily: 'serif' }}>
+            <div className="mb-2 pb-1.5 border-b-2 border-green-800 text-center">
+              <div className="h-2.5 w-18 bg-green-900 rounded-sm mb-1 mx-auto" />
+              <div className="h-1 w-16 bg-green-600 rounded-sm mx-auto" />
+            </div>
+            <div className="mb-1.5">
+              <div className="h-1.5 w-12 bg-green-800 mb-1" />
+              <div className="space-y-0.5">
+                <div className="h-1 w-full bg-green-100 rounded-sm" />
+                <div className="h-1 w-4/5 bg-green-100 rounded-sm" />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'dubai':
+        return (
+          <div className="w-full h-full bg-gray-50 p-2 flex flex-col" style={{ fontFamily: 'serif' }}>
+            <div className="mb-2 pb-1.5 border-b-2 border-yellow-500 text-center">
+              <div className="h-2.5 w-18 bg-gray-900 rounded-sm mb-1 mx-auto" />
+              <div className="h-1 w-16 bg-yellow-500 rounded-sm mx-auto" />
+            </div>
+            <div className="mb-1.5">
+              <div className="h-1.5 w-12 bg-yellow-600 mb-1" />
+              <div className="space-y-0.5">
+                <div className="h-1 w-full bg-gray-200 rounded-sm" />
+                <div className="h-1 w-4/5 bg-gray-200 rounded-sm" />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'ember':
+        return (
+          <div className="w-full h-full bg-white p-2 flex flex-col" style={{ fontFamily: 'sans-serif' }}>
+            <div className="mb-2 pb-1.5 border-b-2 border-rose-400 text-center">
+              <div className="h-2.5 w-18 bg-rose-700 rounded-sm mb-1 mx-auto" />
+              <div className="h-1 w-16 bg-rose-400 rounded-sm mx-auto" />
+            </div>
+            <div className="mb-1.5">
+              <div className="h-1.5 w-12 bg-rose-600 mb-1" />
+              <div className="space-y-0.5">
+                <div className="h-1 w-full bg-rose-100 rounded-sm" />
+                <div className="h-1 w-4/5 bg-rose-100 rounded-sm" />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'fortune':
+        return (
+          <div className="w-full h-full bg-white p-2 flex flex-col" style={{ fontFamily: 'serif' }}>
+            <div className="mb-2 pb-1.5 border-b-2 border-rose-900 text-center">
+              <div className="h-2.5 w-18 bg-rose-900 rounded-sm mb-1 mx-auto" />
+              <div className="h-1 w-16 bg-rose-700 rounded-sm mx-auto" />
+            </div>
+            <div className="mb-1.5">
+              <div className="h-1.5 w-12 bg-rose-900 mb-1" />
+              <div className="space-y-0.5">
+                <div className="h-1 w-full bg-rose-100 rounded-sm" />
+                <div className="h-1 w-4/5 bg-rose-100 rounded-sm" />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'glacier':
+        return (
+          <div className="w-full h-full bg-cyan-50 p-2 flex flex-col" style={{ fontFamily: 'sans-serif' }}>
+            <div className="mb-2 pb-1.5 border-b-2 border-cyan-500 text-center">
+              <div className="h-2.5 w-18 bg-cyan-800 rounded-sm mb-1 mx-auto" />
+              <div className="h-1 w-16 bg-cyan-500 rounded-sm mx-auto" />
+            </div>
+            <div className="mb-1.5">
+              <div className="h-1.5 w-12 bg-cyan-700 mb-1" />
+              <div className="space-y-0.5">
+                <div className="h-1 w-full bg-cyan-200 rounded-sm" />
+                <div className="h-1 w-4/5 bg-cyan-200 rounded-sm" />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'harmony':
+        return (
+          <div className="w-full h-full bg-white p-2 flex flex-col" style={{ fontFamily: 'sans-serif' }}>
+            <div className="mb-2 pb-1.5 border-b border-purple-400 text-center">
+              <div className="h-2.5 w-18 bg-purple-800 rounded-sm mb-1 mx-auto" />
+              <div className="h-1 w-16 bg-purple-400 rounded-sm mx-auto" />
+            </div>
+            <div className="mb-1.5">
+              <div className="h-1.5 w-12 bg-purple-600 mb-1" />
+              <div className="space-y-0.5">
+                <div className="h-1 w-full bg-purple-100 rounded-sm" />
+                <div className="h-1 w-4/5 bg-purple-100 rounded-sm" />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'iconic':
+        return (
+          <div className="w-full h-full bg-white p-2 flex flex-col" style={{ fontFamily: 'sans-serif' }}>
+            <div className="mb-2 bg-gray-900 -mx-2 -mt-2 px-2 pt-2 pb-1.5 border-b-4 border-yellow-400 text-center">
+              <div className="h-3 w-20 bg-yellow-400 mb-1 mx-auto" />
+              <div className="h-1 w-16 bg-gray-600 mx-auto" />
+            </div>
+            <div className="mb-1.5 mt-1">
+              <div className="h-2 w-14 bg-yellow-400 mb-1 inline-block" />
+              <div className="space-y-0.5">
+                <div className="h-1 w-full bg-gray-200" />
+                <div className="h-1 w-5/6 bg-gray-200" />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'jasper':
+        return (
+          <div className="w-full h-full bg-orange-50 p-2 flex flex-col" style={{ fontFamily: 'sans-serif' }}>
+            <div className="mb-2 pb-1.5 border-b-2 border-orange-700 text-center">
+              <div className="h-2.5 w-18 bg-orange-900 rounded-sm mb-1 mx-auto" />
+              <div className="h-1 w-16 bg-orange-600 rounded-sm mx-auto" />
+            </div>
+            <div className="mb-1.5">
+              <div className="h-1.5 w-12 bg-orange-800 mb-1" />
+              <div className="space-y-0.5">
+                <div className="h-1 w-full bg-orange-200 rounded-sm" />
+                <div className="h-1 w-4/5 bg-orange-200 rounded-sm" />
+              </div>
+            </div>
+          </div>
+        );
+
       default:
         return (
           <div className="w-full h-full bg-white p-2 flex flex-col items-center justify-center">

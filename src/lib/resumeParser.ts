@@ -3,9 +3,10 @@ import mammoth from 'mammoth';
 
 import { invokeNetlifyFunction } from '@/lib/api';
 
-// Use the CDN worker for pdfjs-dist
-const PDFJS_VERSION = '4.4.168';
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.worker.min.mjs`;
+// Use the bundled worker from pdfjs-dist
+// @ts-ignore - worker import
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 interface ParsedResume {
   contact: {

@@ -93,19 +93,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Navigation */}
       <nav className="relative flex-1 p-3 space-y-1 overflow-y-auto">
         <TooltipProvider delayDuration={0}>
-          {NAV_ITEMS.map((item, index) => {
+          {NAV_ITEMS.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <Tooltip key={item.path}>
                 <TooltipTrigger asChild>
                   <Link to={item.path} onClick={() => isMobile && setMobileMenuOpen(false)}>
-                    <motion.div
-                      initial={isMobile ? { opacity: 1 } : { opacity: 0, x: -20 }}
-                      animate={isMobile ? { opacity: 1 } : { opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
-                      whileHover={{ x: 4 }}
+                    <div
                       className={cn(
-                        'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all relative',
+                        'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all relative hover:translate-x-1',
                         isActive
                           ? 'text-primary-foreground'
                           : 'text-muted-foreground hover:text-foreground',
@@ -114,10 +110,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     >
                       {/* Active background with glow */}
                       {isActive && (
-                        <motion.div
-                          layoutId={isMobile ? `activeNavMobile-${item.path}` : "activeNav"}
+                        <div
                           className="absolute inset-0 bg-primary rounded-lg shadow-lg shadow-primary/30"
-                          transition={{ type: 'spring', duration: 0.5 }}
                         />
                       )}
 
@@ -128,7 +122,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
                       <item.icon className={cn('h-5 w-5 flex-shrink-0 relative z-10', isActive && 'text-primary-foreground')} />
                       {(!collapsed || isMobile) && <span className="relative z-10">{item.label}</span>}
-                    </motion.div>
+                    </div>
                   </Link>
                 </TooltipTrigger>
                 {collapsed && !isMobile && (
@@ -148,10 +142,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link to="/resumes" onClick={() => isMobile && setMobileMenuOpen(false)}>
-                <motion.div
-                  whileHover={{ x: 4 }}
+                <div
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all relative',
+                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all relative hover:translate-x-1',
                     location.pathname === '/resumes'
                       ? 'text-primary-foreground'
                       : 'text-muted-foreground hover:text-foreground',
@@ -159,15 +152,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   )}
                 >
                   {location.pathname === '/resumes' && (
-                    <motion.div
-                      layoutId={isMobile ? "activeNavBottomMobile" : "activeNavBottom"}
+                    <div
                       className="absolute inset-0 bg-primary rounded-lg shadow-lg shadow-primary/30"
-                      transition={{ type: 'spring', duration: 0.5 }}
                     />
                   )}
                   <Files className={cn('h-5 w-5 flex-shrink-0 relative z-10', location.pathname === '/resumes' && 'text-primary-foreground')} />
                   {(!collapsed || isMobile) && <span className="relative z-10">My Resumes</span>}
-                </motion.div>
+                </div>
               </Link>
             </TooltipTrigger>
             {collapsed && !isMobile && <TooltipContent side="right">My Resumes</TooltipContent>}
@@ -181,10 +172,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link to="/settings" onClick={() => isMobile && setMobileMenuOpen(false)}>
-                <motion.div
-                  whileHover={{ x: 4 }}
+                <div
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all relative',
+                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all relative hover:translate-x-1',
                     location.pathname === '/settings'
                       ? 'text-primary-foreground'
                       : 'text-muted-foreground hover:text-foreground',
@@ -192,15 +182,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   )}
                 >
                   {location.pathname === '/settings' && (
-                    <motion.div
-                      layoutId={isMobile ? "activeNavSettingsMobile" : "activeNavSettings"}
+                    <div
                       className="absolute inset-0 bg-primary rounded-lg shadow-lg shadow-primary/30"
-                      transition={{ type: 'spring', duration: 0.5 }}
                     />
                   )}
                   <Settings2 className={cn('h-5 w-5 flex-shrink-0 relative z-10', location.pathname === '/settings' && 'text-primary-foreground')} />
                   {(!collapsed || isMobile) && <span className="relative z-10">Settings</span>}
-                </motion.div>
+                </div>
               </Link>
             </TooltipTrigger>
             {collapsed && !isMobile && <TooltipContent side="right">Settings</TooltipContent>}

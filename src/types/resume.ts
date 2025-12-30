@@ -5,6 +5,7 @@ export interface ContactInfo {
   location: string;
   linkedin: string;
   website: string;
+  profilePicture?: string; // Base64 encoded image or URL
 }
 
 export interface Experience {

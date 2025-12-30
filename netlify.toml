@@ -4,9 +4,7 @@
   publish = "dist"
 
 [functions]
-  # Puppeteer/Chromium doesn't bundle well with esbuild in Netlify dev.
-  # Use zisi so Netlify ships node_modules without bundling.
-  node_bundler = "zisi"
+  node_bundler = "esbuild"
 
 [[redirects]]
   from = "/*"

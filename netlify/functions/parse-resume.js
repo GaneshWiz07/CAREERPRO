@@ -1,12 +1,10 @@
-import type { Handler, HandlerEvent, HandlerContext } from "@netlify/functions";
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
+export const handler = async (event, context) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: corsHeaders, body: '' };
   }
@@ -140,7 +138,6 @@ Return ONLY valid JSON in this exact format:
       throw new Error('No response from Groq API');
     }
 
-
     console.log('Groq response:', content.substring(0, 500));
 
     let parsedResume;
@@ -173,4 +170,3 @@ Return ONLY valid JSON in this exact format:
   }
 };
 
-export { handler };

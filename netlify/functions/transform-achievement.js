@@ -1,12 +1,10 @@
-import type { Handler, HandlerEvent, HandlerContext } from "@netlify/functions";
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
+export const handler = async (event, context) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: corsHeaders, body: '' };
   }
@@ -79,4 +77,3 @@ Only return the transformed bullet point, nothing else.`
   }
 };
 
-export { handler };

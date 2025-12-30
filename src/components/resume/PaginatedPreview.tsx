@@ -19,7 +19,7 @@ const TEMPLATE_STYLES: Record<string, {
   nameStyle: string;
   bodyStyle: string;
   accentColor?: string;
-  layout: 'classic' | 'modern' | 'compact' | 'elegant' | 'flat' | 'spartan' | 'stackoverflow' | 'kendall' | 'paper' | 'macchiato' | 'crisp' | 'classy' | 'refined' | 'executive' | 'nordic' | 'tokyo' | 'fresh';
+  layout: 'classic' | 'modern' | 'compact' | 'elegant' | 'flat' | 'spartan' | 'stackoverflow' | 'kendall' | 'paper' | 'macchiato' | 'crisp' | 'classy' | 'refined' | 'executive' | 'nordic' | 'tokyo' | 'fresh' | 'aurora' | 'berlin' | 'cambridge' | 'dubai' | 'ember' | 'fortune' | 'glacier' | 'harmony' | 'iconic' | 'jasper';
 }> = {
   classic: {
     fontFamily: "'Georgia', serif",
@@ -170,6 +170,97 @@ const TEMPLATE_STYLES: Record<string, {
     accentColor: '#65a30d',
     layout: 'fresh',
   },
+  // 10 New Templates
+  aurora: {
+    fontFamily: "'Outfit', sans-serif",
+    headerStyle: "text-center border-b-2 border-violet-500 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold uppercase tracking-wide text-violet-600 border-b border-violet-200 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-violet-800 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#7c3aed',
+    layout: 'aurora',
+  },
+  berlin: {
+    fontFamily: "'Oswald', sans-serif",
+    headerStyle: "text-center border-b-4 border-gray-800 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-bold uppercase tracking-widest text-gray-800 bg-gray-100 px-2 py-1 mb-2",
+    nameStyle: "text-3xl font-bold uppercase tracking-wide text-gray-900 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#1f2937',
+    layout: 'berlin',
+  },
+  cambridge: {
+    fontFamily: "'EB Garamond', serif",
+    headerStyle: "text-center border-b-2 border-green-800 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold uppercase tracking-wide text-green-800 border-b border-green-300 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-green-900 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#166534',
+    layout: 'cambridge',
+  },
+  dubai: {
+    fontFamily: "'Bodoni Moda', serif",
+    headerStyle: "text-center border-b-2 border-yellow-500 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold uppercase tracking-wide text-yellow-700 border-b border-yellow-300 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-gray-900 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#b45309',
+    layout: 'dubai',
+  },
+  ember: {
+    fontFamily: "'Rubik', sans-serif",
+    headerStyle: "text-center border-b-2 border-rose-400 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold uppercase tracking-wide text-rose-600 border-b border-rose-200 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-rose-700 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#e11d48',
+    layout: 'ember',
+  },
+  fortune: {
+    fontFamily: "'Crimson Pro', serif",
+    headerStyle: "text-center border-b-2 border-rose-900 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold uppercase tracking-wide text-rose-900 border-b border-rose-300 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-rose-900 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#881337',
+    layout: 'fortune',
+  },
+  glacier: {
+    fontFamily: "'Cabin', sans-serif",
+    headerStyle: "text-center border-b-2 border-cyan-500 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold uppercase tracking-wide text-cyan-700 border-b border-cyan-200 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-cyan-800 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#0891b2',
+    layout: 'glacier',
+  },
+  harmony: {
+    fontFamily: "'Karla', sans-serif",
+    headerStyle: "text-center border-b border-purple-400 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold uppercase tracking-wide text-purple-600 border-b border-purple-200 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-purple-800 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#9333ea',
+    layout: 'harmony',
+  },
+  iconic: {
+    fontFamily: "'Barlow', sans-serif",
+    headerStyle: "text-center border-b-4 border-yellow-400 pb-4 mb-4 bg-gray-900 -mx-10 -mt-10 px-10 pt-10",
+    sectionHeaderStyle: "text-sm font-bold uppercase tracking-widest text-gray-900 bg-yellow-400 px-2 py-1 mb-2 inline-block",
+    nameStyle: "text-3xl font-black text-yellow-400 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#eab308',
+    layout: 'iconic',
+  },
+  jasper: {
+    fontFamily: "'Josefin Sans', sans-serif",
+    headerStyle: "text-center border-b-2 border-orange-700 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold uppercase tracking-wide text-orange-800 border-b border-orange-300 pb-1 mb-2",
+    nameStyle: "text-2xl font-semibold text-orange-900 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#c2410c',
+    layout: 'jasper',
+  },
 };
 
 // Check if content is empty
@@ -220,6 +311,25 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
   const [zoom, setZoom] = useState(0.7);
   const measureRef = useRef<HTMLDivElement>(null);
 
+  // Adjust default zoom based on screen width
+  useEffect(() => {
+    const updateZoomForScreenSize = () => {
+      const width = window.innerWidth;
+      if (width < 480) {
+        setZoom(0.4);
+      } else if (width < 640) {
+        setZoom(0.5);
+      } else if (width < 768) {
+        setZoom(0.55);
+      } else {
+        setZoom(0.7);
+      }
+    };
+    updateZoomForScreenSize();
+    window.addEventListener('resize', updateZoomForScreenSize);
+    return () => window.removeEventListener('resize', updateZoomForScreenSize);
+  }, []);
+
   // Calculate total pages based on content height
   const calculatePages = useCallback(() => {
     if (measureRef.current) {
@@ -260,6 +370,15 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
           return (
             <header key="contact" className={styles.headerStyle}>
               <div className="bg-gray-900 px-4 py-4 -mx-10 -mt-10 mb-4">
+                {contact.profilePicture && (
+                  <div className="flex justify-center mb-3">
+                    <img
+                      src={contact.profilePicture}
+                      alt={contact.fullName || 'Profile'}
+                      className="w-16 h-16 rounded-full object-cover border-2 border-white/30"
+                    />
+                  </div>
+                )}
                 <h1 className={cn(styles.nameStyle, "text-center text-white")}>
                   {contact.fullName || 'Your Name'}
                 </h1>
@@ -277,11 +396,18 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
           );
         }
 
-        // Compact/OnePage style - left-aligned
+        // Compact/OnePage style - left-aligned with optional photo
         if (styles.layout === 'compact') {
           return (
             <header key="contact" className={styles.headerStyle}>
-              <div>
+              <div className="flex items-center gap-3">
+                {contact.profilePicture && (
+                  <img
+                    src={contact.profilePicture}
+                    alt={contact.fullName || 'Profile'}
+                    className="w-12 h-12 rounded-full object-cover border border-gray-300"
+                  />
+                )}
                 <h1 className={styles.nameStyle} style={{ color: styles.accentColor || '#1f2937' }}>
                   {contact.fullName || 'Your Name'}
                 </h1>
@@ -298,6 +424,16 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
         // Default centered style with template-specific colors
         return (
           <header key="contact" className={styles.headerStyle}>
+            {contact.profilePicture && (
+              <div className="flex justify-center mb-3">
+                <img
+                  src={contact.profilePicture}
+                  alt={contact.fullName || 'Profile'}
+                  className="w-20 h-20 rounded-full object-cover border-2"
+                  style={{ borderColor: styles.accentColor || '#e5e7eb' }}
+                />
+              </div>
+            )}
             <h1 className={styles.nameStyle} style={{ color: styles.accentColor || '#1f2937' }}>
               {contact.fullName || 'Your Name'}
             </h1>
@@ -494,39 +630,40 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
   return (
     <div className={cn("flex flex-col items-center", className)}>
       {/* Preview Notice */}
-      <Alert className="mb-4 max-w-xl border-primary/30 bg-primary/5">
-        <Info className="h-4 w-4 text-primary" />
-        <AlertDescription className="text-sm">
-          <strong>Preview Mode:</strong> This is a visual preview. The exported PDF uses optimized formatting
-          for ATS compatibility and may have slight layout differences.
+      <Alert className="mb-3 sm:mb-4 mx-4 sm:mx-0 max-w-xl border-primary/30 bg-primary/5">
+        <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary shrink-0" />
+        <AlertDescription className="text-xs sm:text-sm">
+          <strong>Preview Mode:</strong> <span className="hidden sm:inline">This is a visual preview. The exported PDF uses optimized formatting
+          for ATS compatibility and may have slight layout differences.</span>
+          <span className="sm:hidden">Visual preview only. PDF may differ slightly.</span>
         </AlertDescription>
       </Alert>
 
       {/* Controls */}
-      <div className="sticky top-0 z-10 flex items-center gap-4 mb-6 bg-muted/80 backdrop-blur rounded-lg px-4 py-2">
-        <div className="flex items-center gap-2">
+      <div className="sticky top-0 z-10 flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6 bg-muted/80 backdrop-blur rounded-lg px-2 sm:px-4 py-1.5 sm:py-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setZoom(Math.max(0.4, zoom - 0.1))}
-            className="h-8 w-8"
+            onClick={() => setZoom(Math.max(0.3, zoom - 0.1))}
+            className="h-7 w-7 sm:h-8 sm:w-8"
           >
-            <ZoomOut className="h-4 w-4" />
+            <ZoomOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </Button>
-          <span className="text-sm w-16 text-center">{Math.round(zoom * 100)}%</span>
+          <span className="text-xs sm:text-sm w-12 sm:w-16 text-center">{Math.round(zoom * 100)}%</span>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setZoom(Math.min(1.2, zoom + 0.1))}
-            className="h-8 w-8"
+            className="h-7 w-7 sm:h-8 sm:w-8"
           >
-            <ZoomIn className="h-4 w-4" />
+            <ZoomIn className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </Button>
         </div>
 
-        <div className="h-6 w-px bg-border" />
+        <div className="h-5 sm:h-6 w-px bg-border" />
 
-        <span className="text-sm text-muted-foreground">
+        <span className="text-xs sm:text-sm text-muted-foreground">
           {totalPages} {totalPages === 1 ? 'page' : 'pages'}
         </span>
       </div>
@@ -550,17 +687,17 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
 
       {/* Scrollable Pages Container */}
       <div
-        className="relative overflow-auto bg-muted/30 rounded-lg p-8"
+        className="relative overflow-auto bg-muted/30 rounded-lg p-3 sm:p-6 md:p-8 w-full"
         style={{
           maxHeight: 'calc(100vh - 200px)',
         }}
       >
         {/* Stacked Pages View */}
-        <div className="flex flex-col gap-6 items-center">
+        <div className="flex flex-col gap-4 sm:gap-6 items-center">
           {Array.from({ length: totalPages }, (_, pageIndex) => (
             <div
               key={pageIndex}
-              className="relative bg-white shadow-2xl rounded-sm"
+              className="relative bg-white shadow-xl sm:shadow-2xl rounded-sm mx-auto"
               style={{
                 width: PAGE_WIDTH * zoom,
                 height: PAGE_HEIGHT * zoom,
@@ -568,7 +705,7 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
               }}
             >
               {/* Page number badge */}
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded-full z-10">
+              <div className="absolute -top-2.5 sm:-top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full z-10">
                 Page {pageIndex + 1}
               </div>
 

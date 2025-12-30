@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ResumeProvider } from "@/contexts/ResumeContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import LandingPage from "./pages/LandingPage";
 import EditorPage from "./pages/EditorPage";
@@ -21,8 +22,9 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <ResumeProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        <ResumeProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
@@ -40,9 +42,10 @@ const App = () => (
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
-      </ResumeProvider>
-    </TooltipProvider>
+          </BrowserRouter>
+        </ResumeProvider>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

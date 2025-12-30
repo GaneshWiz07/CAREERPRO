@@ -1,12 +1,10 @@
-import type { Handler, HandlerEvent, HandlerContext } from "@netlify/functions";
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
+export const handler = async (event, context) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: corsHeaders, body: '' };
   }
@@ -25,8 +23,8 @@ const handler: Handler = async (event: HandlerEvent, context: HandlerContext) =>
     }
     console.log('GROQ_API_KEY loaded:', GROQ_API_KEY.substring(0, 4) + '...');
 
-    const skillsList = skills?.map((s: { name: string }) => s.name).join(', ') || '';
-    const rolesList = experiences?.map((e: { title: string }) => e.title).join(', ') || '';
+    const skillsList = skills?.map((s) => s.name).join(', ') || '';
+    const rolesList = experiences?.map((e) => e.title).join(', ') || '';
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -81,4 +79,3 @@ Only return the enhanced summary, nothing else.`
   }
 };
 
-export { handler };

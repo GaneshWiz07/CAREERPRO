@@ -1,12 +1,10 @@
-import type { Handler, HandlerEvent, HandlerContext } from "@netlify/functions";
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
+export const handler = async (event, context) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: corsHeaders, body: '' };
   }
@@ -37,23 +35,23 @@ SUMMARY:
 ${resume.summary || 'No summary provided'}
 
 WORK EXPERIENCE:
-${resume.experiences?.map((e: any) =>
+${resume.experiences?.map((e) =>
       `${e.title} at ${e.company} (${e.startDate} - ${e.current ? 'Present' : e.endDate})
   Location: ${e.location || 'Not specified'}
   Achievements:
-  ${e.bullets?.map((b: string) => `  • ${b}`).join('\n') || '  No bullets'}`
+  ${e.bullets?.map((b) => `  • ${b}`).join('\n') || '  No bullets'}`
     ).join('\n\n') || 'No experience listed'}
 
 EDUCATION:
-${resume.education?.map((e: any) =>
+${resume.education?.map((e) =>
       `${e.degree} in ${e.field} from ${e.institution} (${e.graduationDate})${e.gpa ? ` - GPA: ${e.gpa}` : ''}`
     ).join('\n') || 'No education listed'}
 
 SKILLS:
-${resume.skills?.map((s: any) => s.name).join(', ') || 'No skills listed'}
+${resume.skills?.map((s) => s.name).join(', ') || 'No skills listed'}
 
 CERTIFICATIONS:
-${resume.certifications?.map((c: any) =>
+${resume.certifications?.map((c) =>
       `${c.name} - ${c.issuer} (${c.date})`
     ).join('\n') || 'No certifications listed'}
 `;
@@ -198,4 +196,3 @@ Provide comprehensive ATS analysis with optimized content.`
   }
 };
 
-export { handler };

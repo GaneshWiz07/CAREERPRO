@@ -11,6 +11,167 @@ interface PaginatedPreviewProps {
   className?: string;
 }
 
+// Template style configurations
+const TEMPLATE_STYLES: Record<string, {
+  fontFamily: string;
+  headerStyle: string;
+  sectionHeaderStyle: string;
+  nameStyle: string;
+  bodyStyle: string;
+  accentColor?: string;
+  layout: 'classic' | 'modern' | 'compact' | 'elegant' | 'flat' | 'spartan' | 'stackoverflow' | 'kendall' | 'paper' | 'macchiato' | 'crisp' | 'classy' | 'refined' | 'executive' | 'nordic' | 'tokyo' | 'fresh';
+}> = {
+  classic: {
+    fontFamily: "'Georgia', serif",
+    headerStyle: "text-center border-b border-gray-400 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-bold uppercase tracking-wide border-b border-gray-400 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    layout: 'classic',
+  },
+  modern: {
+    fontFamily: "'Open Sans', sans-serif",
+    headerStyle: "text-center border-b-2 border-blue-600 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-bold uppercase tracking-wider text-blue-700 border-b-2 border-blue-200 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-gray-900 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#2563eb',
+    layout: 'modern',
+  },
+  elegant: {
+    fontFamily: "'Playfair Display', 'Georgia', serif",
+    headerStyle: "text-center border-b border-purple-300 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold tracking-wide text-gray-700 border-b border-purple-200 pb-1 mb-2 flex items-center gap-2",
+    nameStyle: "text-2xl font-bold mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#9333ea',
+    layout: 'elegant',
+  },
+  flat: {
+    fontFamily: "'Roboto', 'Arial', sans-serif",
+    headerStyle: "text-center mb-5",
+    sectionHeaderStyle: "text-sm font-bold uppercase tracking-widest text-gray-900 mb-3",
+    nameStyle: "text-3xl font-black mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    layout: 'flat',
+  },
+  onepage: {
+    fontFamily: "'Inter', 'Arial', sans-serif",
+    headerStyle: "flex justify-between items-start border-b border-gray-300 pb-2 mb-3",
+    sectionHeaderStyle: "text-xs font-bold uppercase tracking-wider text-teal-700 mb-1",
+    nameStyle: "text-xl font-bold",
+    bodyStyle: "text-xs leading-tight",
+    accentColor: '#0d9488',
+    layout: 'compact',
+  },
+  spartan: {
+    fontFamily: "'Montserrat', 'Arial Black', sans-serif",
+    headerStyle: "mb-4",
+    sectionHeaderStyle: "text-sm font-black uppercase tracking-widest text-gray-800 bg-gray-100 px-2 py-1 mb-2",
+    nameStyle: "text-2xl font-black uppercase tracking-wider mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    layout: 'spartan',
+  },
+  stackoverflow: {
+    fontFamily: "'Source Sans Pro', 'Arial', sans-serif",
+    headerStyle: "text-center border-b-2 border-orange-500 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-bold uppercase tracking-wider text-orange-600 border-b border-orange-200 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-gray-900 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#ea580c',
+    layout: 'stackoverflow',
+  },
+  // New templates
+  kendall: {
+    fontFamily: "'Lato', sans-serif",
+    headerStyle: "text-center border-b border-slate-400 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold uppercase tracking-wide text-slate-600 border-b border-slate-300 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-slate-800 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#475569',
+    layout: 'kendall',
+  },
+  paper: {
+    fontFamily: "'Merriweather', serif",
+    headerStyle: "text-center border-b-2 border-gray-900 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-black uppercase tracking-wide text-gray-900 border-b border-gray-400 pb-1 mb-2",
+    nameStyle: "text-3xl font-bold text-gray-900 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    layout: 'paper',
+  },
+  macchiato: {
+    fontFamily: "'Nunito', sans-serif",
+    headerStyle: "text-center border-b border-amber-600 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-bold uppercase tracking-wide text-amber-800 border-b border-amber-300 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-amber-900 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#92400e',
+    layout: 'macchiato',
+  },
+  crisp: {
+    fontFamily: "'Poppins', sans-serif",
+    headerStyle: "text-center border-b-4 border-gray-900 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-bold uppercase tracking-widest text-gray-900 mb-2",
+    nameStyle: "text-3xl font-extrabold text-gray-900 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    layout: 'crisp',
+  },
+  classy: {
+    fontFamily: "'Cormorant Garamond', serif",
+    headerStyle: "text-center border-b border-yellow-600 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold uppercase tracking-wide text-yellow-700 border-b border-yellow-300 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-gray-800 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#ca8a04',
+    layout: 'classy',
+  },
+  refined: {
+    fontFamily: "'Quicksand', sans-serif",
+    headerStyle: "text-center border-b border-emerald-400 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold uppercase tracking-wide text-emerald-700 border-b border-emerald-200 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-gray-800 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#059669',
+    layout: 'refined',
+  },
+  executive: {
+    fontFamily: "'Libre Baskerville', serif",
+    headerStyle: "text-center border-b-2 border-blue-900 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-bold uppercase tracking-wide text-blue-900 border-b border-blue-300 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-blue-900 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#1e3a8a',
+    layout: 'executive',
+  },
+  nordic: {
+    fontFamily: "'Work Sans', sans-serif",
+    headerStyle: "text-center border-b border-teal-500 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-medium uppercase tracking-wide text-teal-700 border-b border-teal-200 pb-1 mb-2",
+    nameStyle: "text-2xl font-semibold text-gray-800 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#0d9488',
+    layout: 'nordic',
+  },
+  tokyo: {
+    fontFamily: "'Noto Sans', sans-serif",
+    headerStyle: "text-center border-b-2 border-red-600 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-bold uppercase tracking-wide text-red-600 border-b border-red-200 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-gray-900 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#dc2626',
+    layout: 'tokyo',
+  },
+  fresh: {
+    fontFamily: "'DM Sans', sans-serif",
+    headerStyle: "text-center border-b-2 border-lime-500 pb-4 mb-4",
+    sectionHeaderStyle: "text-sm font-semibold uppercase tracking-wide text-lime-700 border-b border-lime-300 pb-1 mb-2",
+    nameStyle: "text-2xl font-bold text-gray-800 mb-1",
+    bodyStyle: "text-sm leading-relaxed",
+    accentColor: '#65a30d',
+    layout: 'fresh',
+  },
+};
+
 // Check if content is empty
 const isEmptyContent = (content: string): boolean => {
   if (!content) return true;
@@ -21,23 +182,23 @@ const isEmptyContent = (content: string): boolean => {
 // Render HTML content - handles lists and inline formatting
 const RenderHtml = ({ html, className }: { html: string; className?: string }) => {
   const hasList = /<[uo]l>/.test(html);
-  
+
   if (hasList) {
     return (
-      <div 
+      <div
         className={cn("formatted-list", className)}
         dangerouslySetInnerHTML={{ __html: html }}
       />
     );
   }
-  
+
   const inlineHtml = html
     .replace(/<p>/g, '')
     .replace(/<\/p>/g, '')
     .replace(/<br\s*\/?>/g, ' ');
-  
+
   return (
-    <span 
+    <span
       className={className}
       dangerouslySetInnerHTML={{ __html: inlineHtml }}
     />
@@ -51,6 +212,9 @@ const PADDING = 40; // Page padding
 const CONTENT_HEIGHT = PAGE_HEIGHT - (PADDING * 2); // Usable content height per page
 
 export function PaginatedPreview({ resume, showHeatmap = false, className }: PaginatedPreviewProps) {
+  // Get template styles based on selected template
+  const templateId = resume.templateId || 'classic';
+  const styles = TEMPLATE_STYLES[templateId] || TEMPLATE_STYLES.classic;
   const { contact, summary, experiences, education, skills, certifications, customSections = [] } = resume;
   const [totalPages, setTotalPages] = useState(1);
   const [zoom, setZoom] = useState(0.7);
@@ -91,17 +255,58 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
   const renderSection = (sectionType: string, sectionId?: string) => {
     switch (sectionType) {
       case 'contact':
+        // Spartan style - dark banner header
+        if (styles.layout === 'spartan') {
+          return (
+            <header key="contact" className={styles.headerStyle}>
+              <div className="bg-gray-900 px-4 py-4 -mx-10 -mt-10 mb-4">
+                <h1 className={cn(styles.nameStyle, "text-center text-white")}>
+                  {contact.fullName || 'Your Name'}
+                </h1>
+                <div className="text-sm text-gray-300 flex flex-wrap justify-center gap-3 mt-2">
+                  {contact.email && <span>{contact.email}</span>}
+                  {contact.phone && <span>• {contact.phone}</span>}
+                  {contact.location && <span>• {contact.location}</span>}
+                </div>
+              </div>
+              <div className="text-sm text-gray-500 flex flex-wrap justify-center gap-2">
+                {contact.linkedin && <span>{contact.linkedin}</span>}
+                {contact.website && <span>• {contact.website}</span>}
+              </div>
+            </header>
+          );
+        }
+
+        // Compact/OnePage style - left-aligned
+        if (styles.layout === 'compact') {
+          return (
+            <header key="contact" className={styles.headerStyle}>
+              <div>
+                <h1 className={styles.nameStyle} style={{ color: styles.accentColor || '#1f2937' }}>
+                  {contact.fullName || 'Your Name'}
+                </h1>
+              </div>
+              <div className="text-right text-xs text-gray-600 space-y-0.5">
+                {contact.email && <div>{contact.email}</div>}
+                {contact.phone && <div>{contact.phone}</div>}
+                {contact.location && <div>{contact.location}</div>}
+              </div>
+            </header>
+          );
+        }
+
+        // Default centered style with template-specific colors
         return (
-          <header key="contact" className="text-center border-b border-gray-300 pb-4 mb-4">
-            <h1 className="text-2xl font-bold text-black mb-1">
+          <header key="contact" className={styles.headerStyle}>
+            <h1 className={styles.nameStyle} style={{ color: styles.accentColor || '#1f2937' }}>
               {contact.fullName || 'Your Name'}
             </h1>
-            <div className="text-xs text-gray-600 flex flex-wrap justify-center gap-2">
+            <div className="text-sm flex flex-wrap justify-center gap-2" style={{ color: styles.accentColor ? styles.accentColor : '#4b5563' }}>
               {contact.email && <span>{contact.email}</span>}
               {contact.phone && <span>• {contact.phone}</span>}
               {contact.location && <span>• {contact.location}</span>}
             </div>
-            <div className="text-xs text-gray-600 flex flex-wrap justify-center gap-2 mt-1">
+            <div className="text-sm text-gray-500 flex flex-wrap justify-center gap-2 mt-1">
               {contact.linkedin && <span>{contact.linkedin}</span>}
               {contact.website && <span>• {contact.website}</span>}
             </div>
@@ -111,11 +316,12 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
       case 'summary':
         if (isEmptyContent(summary)) return null;
         return (
-          <section key="summary" className="mb-4">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-black border-b border-gray-300 pb-1 mb-2">
+          <section key="summary" className={styles.layout === 'compact' ? 'mb-2' : 'mb-4'}>
+            <h2 className={styles.sectionHeaderStyle}>
+              {styles.layout === 'elegant' && <span className="w-2 h-2 rounded-full bg-purple-500 inline-block" />}
               Professional Summary
             </h2>
-            <div className="text-xs text-black leading-relaxed">
+            <div className={styles.bodyStyle} style={{ color: '#374151' }}>
               <RenderHtml html={summary} />
             </div>
           </section>
@@ -124,25 +330,28 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
       case 'experience':
         if (experiences.length === 0) return null;
         return (
-          <section key="experience" className="mb-4">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-black border-b border-gray-300 pb-1 mb-2">
+          <section key="experience" className={styles.layout === 'compact' ? 'mb-2' : 'mb-4'}>
+            <h2 className={styles.sectionHeaderStyle}>
+              {styles.layout === 'elegant' && <span className="w-2 h-2 rounded-full bg-purple-500 inline-block" />}
               Work Experience
             </h2>
             {experiences.map((exp) => (
-              <div key={exp.id} className="mb-3">
+              <div key={exp.id} className={styles.layout === 'compact' ? 'mb-2' : 'mb-3'}>
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-xs font-bold text-black">{exp.title || 'Position'}</h3>
-                    <p className="text-xs text-gray-600">{exp.company}{exp.location && `, ${exp.location}`}</p>
+                    <h3 className={cn(styles.bodyStyle, "font-bold")} style={{ color: styles.accentColor || '#1f2937' }}>
+                      {exp.title || 'Position'}
+                    </h3>
+                    <p className={cn(styles.bodyStyle, "text-gray-600")}>{exp.company}{exp.location && `, ${exp.location}`}</p>
                   </div>
-                  <span className="text-xs text-gray-600 whitespace-nowrap font-bold">
+                  <span className={cn(styles.bodyStyle, "text-gray-500 whitespace-nowrap font-semibold")}>
                     {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
                   </span>
                 </div>
                 {exp.bullets.filter(b => !isEmptyContent(b)).length > 0 && (
                   <ul className="mt-1 space-y-0.5">
                     {exp.bullets.filter(b => !isEmptyContent(b)).map((bullet, idx) => (
-                      <li key={idx} className="text-xs text-black flex">
+                      <li key={idx} className={cn(styles.bodyStyle, "flex")} style={{ color: '#374151' }}>
                         <span className="mr-2">•</span>
                         <RenderHtml html={bullet} />
                       </li>
@@ -157,23 +366,26 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
       case 'education':
         if (education.length === 0) return null;
         return (
-          <section key="education" className="mb-4">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-black border-b border-gray-300 pb-1 mb-2">
+          <section key="education" className={styles.layout === 'compact' ? 'mb-2' : 'mb-4'}>
+            <h2 className={styles.sectionHeaderStyle}>
+              {styles.layout === 'elegant' && <span className="w-2 h-2 rounded-full bg-purple-500 inline-block" />}
               Education
             </h2>
             {education.map((edu) => (
-              <div key={edu.id} className="mb-2">
+              <div key={edu.id} className={styles.layout === 'compact' ? 'mb-1' : 'mb-2'}>
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-xs font-bold text-black">{edu.degree}</h3>
-                    <p className="text-xs text-gray-600">{edu.institution}{edu.location && `, ${edu.location}`}</p>
+                    <h3 className={cn(styles.bodyStyle, "font-bold")} style={{ color: styles.accentColor || '#1f2937' }}>
+                      {edu.degree}
+                    </h3>
+                    <p className={cn(styles.bodyStyle, "text-gray-600")}>{edu.institution}{edu.location && `, ${edu.location}`}</p>
                   </div>
-                  <span className="text-xs text-gray-600 font-bold">
+                  <span className={cn(styles.bodyStyle, "text-gray-500 font-semibold")}>
                     {edu.batchStart && edu.batchEnd ? `${edu.batchStart} - ${edu.batchEnd}` : edu.batchStart || edu.batchEnd}
                   </span>
                 </div>
                 {(edu.gpa || (edu.honors && !isEmptyContent(edu.honors))) && (
-                  <div className="text-xs text-gray-600 mt-0.5">
+                  <div className={cn(styles.bodyStyle, "text-gray-500 mt-0.5")}>
                     {edu.gpa && <span>GPA: {edu.gpa}</span>}
                     {edu.gpa && edu.honors && !isEmptyContent(edu.honors) && <span> | </span>}
                     {edu.honors && !isEmptyContent(edu.honors) && <RenderHtml html={edu.honors} />}
@@ -187,8 +399,9 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
       case 'skills':
         if (skills.length === 0) return null;
         return (
-          <section key="skills" className="mb-4">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-black border-b border-gray-300 pb-1 mb-2">
+          <section key="skills" className={styles.layout === 'compact' ? 'mb-2' : 'mb-4'}>
+            <h2 className={styles.sectionHeaderStyle}>
+              {styles.layout === 'elegant' && <span className="w-2 h-2 rounded-full bg-purple-500 inline-block" />}
               Skills
             </h2>
             <div className="space-y-1">
@@ -200,8 +413,8 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
                   return acc;
                 }, {} as Record<string, string[]>)
               ).map(([category, items]) => (
-                <p key={category} className="text-xs text-black">
-                  <span className="font-semibold">{category}:</span>{' '}
+                <p key={category} className={styles.bodyStyle} style={{ color: '#374151' }}>
+                  <span className="font-semibold" style={{ color: styles.accentColor || '#1f2937' }}>{category}:</span>{' '}
                   {items.filter(Boolean).join(', ')}
                 </p>
               ))}
@@ -212,14 +425,15 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
       case 'certifications':
         if (certifications.length === 0) return null;
         return (
-          <section key="certifications" className="mb-4">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-black border-b border-gray-300 pb-1 mb-2">
+          <section key="certifications" className={styles.layout === 'compact' ? 'mb-2' : 'mb-4'}>
+            <h2 className={styles.sectionHeaderStyle}>
+              {styles.layout === 'elegant' && <span className="w-2 h-2 rounded-full bg-purple-500 inline-block" />}
               Certifications
             </h2>
             {certifications.map((cert) => (
-              <div key={cert.id} className="flex justify-between text-xs mb-1">
-                <span className="font-medium text-black">{cert.name}</span>
-                <span className="text-gray-600">{cert.issuer} • {cert.date}</span>
+              <div key={cert.id} className={cn("flex justify-between", styles.bodyStyle, styles.layout === 'compact' ? 'mb-0.5' : 'mb-1')}>
+                <span className="font-medium" style={{ color: styles.accentColor || '#1f2937' }}>{cert.name}</span>
+                <span className="text-gray-500">{cert.issuer} • {cert.date}</span>
               </div>
             ))}
           </section>
@@ -229,27 +443,26 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
         const customSection = customSections.find(cs => cs.id === sectionId);
         if (!customSection || customSection.items.length === 0) return null;
         return (
-          <section key={customSection.id} className="mb-4">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-black border-b border-gray-300 pb-1 mb-2">
+          <section key={customSection.id} className={styles.layout === 'compact' ? 'mb-2' : 'mb-4'}>
+            <h2 className={styles.sectionHeaderStyle}>
+              {styles.layout === 'elegant' && <span className="w-2 h-2 rounded-full bg-purple-500 inline-block" />}
               {customSection.title}
             </h2>
             {customSection.items.map((item) => (
-              <div key={item.id} className="mb-2">
+              <div key={item.id} className={styles.layout === 'compact' ? 'mb-1' : 'mb-2'}>
                 <div className="flex justify-between items-start">
-                  <div className="flex items-baseline gap-4 flex-1">
-                    <h3 className="text-xs font-bold text-black">{item.title}</h3>
-                    {customSection.showTechnologies && item.technologies && (
-                      <span className="text-xs text-gray-600 italic">{item.technologies}</span>
-                    )}
-                  </div>
+                  <h3 className={cn(styles.bodyStyle, "font-bold")} style={{ color: styles.accentColor || '#1f2937' }}>{item.title}</h3>
                   {item.date && (
-                    <span className="text-xs text-gray-600 whitespace-nowrap font-bold">{item.date}</span>
+                    <span className={cn(styles.bodyStyle, "text-gray-500 whitespace-nowrap font-semibold")}>{item.date}</span>
                   )}
                 </div>
+                {customSection.showTechnologies && item.technologies && (
+                  <p className={cn(styles.bodyStyle, "text-gray-500 italic mt-0.5")}>{item.technologies}</p>
+                )}
                 {item.bullets.filter(b => !isEmptyContent(b)).length > 0 && (
                   <ul className="mt-1 space-y-0.5">
                     {item.bullets.filter(b => !isEmptyContent(b)).map((bullet, idx) => (
-                      <li key={idx} className="text-xs text-black flex">
+                      <li key={idx} className={cn(styles.bodyStyle, "flex")} style={{ color: '#374151' }}>
                         <span className="mr-2">•</span>
                         <RenderHtml html={bullet} />
                       </li>
@@ -284,7 +497,7 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
       <Alert className="mb-4 max-w-xl border-primary/30 bg-primary/5">
         <Info className="h-4 w-4 text-primary" />
         <AlertDescription className="text-sm">
-          <strong>Preview Mode:</strong> This is a visual preview. The exported PDF uses optimized formatting 
+          <strong>Preview Mode:</strong> This is a visual preview. The exported PDF uses optimized formatting
           for ATS compatibility and may have slight layout differences.
         </AlertDescription>
       </Alert>
@@ -310,35 +523,35 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
             <ZoomIn className="h-4 w-4" />
           </Button>
         </div>
-        
+
         <div className="h-6 w-px bg-border" />
-        
+
         <span className="text-sm text-muted-foreground">
           {totalPages} {totalPages === 1 ? 'page' : 'pages'}
         </span>
       </div>
 
       {/* Hidden measurement container */}
-      <div 
+      <div
         ref={measureRef}
         className="absolute opacity-0 pointer-events-none"
-        style={{ 
+        style={{
           width: PAGE_WIDTH - (PADDING * 2),
           left: '-9999px',
         }}
       >
-        <div className="resume-content font-serif text-sm leading-relaxed" style={{ fontFamily: 'Georgia, serif' }}>
+        <div className="resume-content text-sm leading-relaxed" style={{ fontFamily: styles.fontFamily }}>
           <style>{resumeContentStyles}</style>
-          {allSections.filter(s => s.visible).map((section) => 
+          {allSections.filter(s => s.visible).map((section) =>
             renderSection(section.type, section.id)
           )}
         </div>
       </div>
 
       {/* Scrollable Pages Container */}
-      <div 
+      <div
         className="relative overflow-auto bg-muted/30 rounded-lg p-8"
-        style={{ 
+        style={{
           maxHeight: 'calc(100vh - 200px)',
         }}
       >
@@ -358,7 +571,7 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded-full z-10">
                 Page {pageIndex + 1}
               </div>
-              
+
               {/* Page wrapper with scaling */}
               <div
                 style={{
@@ -373,9 +586,9 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
                 {/* Content area with padding - this creates the margin effect */}
                 <div
                   id={pageIndex === 0 ? "resume-preview" : undefined}
-                  className="resume-content font-serif text-sm leading-relaxed bg-white"
-                  style={{ 
-                    fontFamily: 'Georgia, serif',
+                  className="resume-content text-sm leading-relaxed bg-white"
+                  style={{
+                    fontFamily: styles.fontFamily,
                     padding: `${PADDING}px`,
                     width: PAGE_WIDTH,
                     height: PAGE_HEIGHT,
@@ -384,7 +597,7 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
                   }}
                 >
                   <style>{resumeContentStyles}</style>
-                  
+
                   {/* Inner content container that scrolls/offsets for pagination */}
                   <div
                     style={{
@@ -392,7 +605,7 @@ export function PaginatedPreview({ resume, showHeatmap = false, className }: Pag
                       marginTop: -(pageIndex * CONTENT_HEIGHT),
                     }}
                   >
-                    {allSections.filter(s => s.visible).map((section) => 
+                    {allSections.filter(s => s.visible).map((section) =>
                       renderSection(section.type, section.id)
                     )}
                   </div>

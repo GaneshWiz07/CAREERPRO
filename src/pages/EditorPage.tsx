@@ -60,10 +60,8 @@ export default function EditorPage() {
 
   const handleExport = async () => {
     setExportDialogOpen(false);
-    setActiveTab('preview');
     setIsExporting(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
       await exportToPDF(resume, exportFilename);
       toast.success('PDF downloaded!');
     } catch (error) {

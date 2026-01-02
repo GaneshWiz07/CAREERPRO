@@ -66,8 +66,8 @@ const LENGTH_OPTIONS = [
 
 export default function CoverLetterPage() {
   const { resume } = useResume();
-  const [yourName, setYourName] = useState(resume?.contactInfo?.fullName || '');
-  const [yourEmail, setYourEmail] = useState(resume?.contactInfo?.email || '');
+  const [yourName, setYourName] = useState(resume?.contact?.fullName || '');
+  const [yourEmail, setYourEmail] = useState(resume?.contact?.email || '');
   const [jobTitle, setJobTitle] = useState('');
   const [company, setCompany] = useState('');
   const [hiringManager, setHiringManager] = useState('');
@@ -83,13 +83,13 @@ export default function CoverLetterPage() {
 
   // Update from resume if available
   React.useEffect(() => {
-    if (resume?.contactInfo?.fullName && !yourName) {
-      setYourName(resume.contactInfo.fullName);
+    if (resume?.contact?.fullName && !yourName) {
+      setYourName(resume.contact.fullName);
     }
-    if (resume?.contactInfo?.email && !yourEmail) {
-      setYourEmail(resume.contactInfo.email);
+    if (resume?.contact?.email && !yourEmail) {
+      setYourEmail(resume.contact.email);
     }
-  }, [resume?.contactInfo]);
+  }, [resume?.contact]);
 
   const handleGenerate = async () => {
     if (!yourName.trim()) {
@@ -116,8 +116,8 @@ export default function CoverLetterPage() {
           contactInfo: {
             fullName: yourName,
             email: yourEmail,
-            phone: resume?.contactInfo?.phone || '',
-            location: resume?.contactInfo?.location || '',
+            phone: resume?.contact?.phone || '',
+            location: resume?.contact?.location || '',
           },
           summary: resume?.summary || '',
           experiences: resume?.experiences || [],
@@ -177,8 +177,8 @@ export default function CoverLetterPage() {
           <div style="margin-bottom: 24px;">
             <p style="margin: 0; font-size: 14pt; font-weight: bold;">${yourName}</p>
             ${yourEmail ? `<p style="margin: 0; font-size: 11pt; color: #444;">${yourEmail}</p>` : ''}
-            ${resume?.contactInfo?.phone ? `<p style="margin: 0; font-size: 11pt; color: #444;">${resume.contactInfo.phone}</p>` : ''}
-            ${resume?.contactInfo?.location ? `<p style="margin: 0; font-size: 11pt; color: #444;">${resume.contactInfo.location}</p>` : ''}
+            ${resume?.contact?.phone ? `<p style="margin: 0; font-size: 11pt; color: #444;">${resume.contact.phone}</p>` : ''}
+            ${resume?.contact?.location ? `<p style="margin: 0; font-size: 11pt; color: #444;">${resume.contact.location}</p>` : ''}
           </div>
           
           <p style="margin: 0 0 20px 0; font-size: 11pt; color: #444;">${today}</p>

@@ -344,27 +344,95 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-border py-12 px-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg flex items-center justify-center">
-              <img src="/logo.svg" alt="CareerPro Logo" className="h-8 w-8" />
+        <div className="max-w-7xl mx-auto">
+          {/* Main Footer Content */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 mb-8">
+            {/* Brand */}
+            <div className="col-span-2 sm:col-span-3 lg:col-span-1">
+              <Link to="/" className="flex items-center gap-2 mb-4">
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center">
+                  <img src="/logo.svg" alt="CareerPro Logo" className="h-8 w-8" />
+                </div>
+                <span className="font-semibold text-foreground">CareerPro</span>
+              </Link>
+              <p className="text-sm text-muted-foreground max-w-xs">
+                AI-powered resume building toolkit for landing your dream job.
+              </p>
             </div>
-            <span className="font-semibold text-foreground">CareerPro</span>
+
+            {/* Resume Tools */}
+            <div>
+              <h4 className="font-medium text-foreground mb-3 text-sm">Resume Tools</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <Link to="/editor" className="hover:text-foreground transition-colors">
+                    Resume Editor
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/tailor" className="hover:text-foreground transition-colors">
+                    Job Tailoring
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/achievements" className="hover:text-foreground transition-colors">
+                    Achievement Transformer
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Analysis Tools */}
+            <div>
+              <h4 className="font-medium text-foreground mb-3 text-sm">Analysis Tools</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <Link to="/analysis" className="hover:text-foreground transition-colors">
+                    ATS Analysis
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/heatmap" className="hover:text-foreground transition-colors">
+                    Recruiter Heatmap
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Career Tools */}
+            <div>
+              <h4 className="font-medium text-foreground mb-3 text-sm">Career Tools</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <Link to="/interview" className="hover:text-foreground transition-colors">
+                    Interview Coach
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/salary" className="hover:text-foreground transition-colors">
+                    Salary Negotiation
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/resumes" className="hover:text-foreground transition-colors">
+                    My Resumes
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <Link to="/editor" className="hover:text-foreground transition-colors">
-              Resume Editor
-            </Link>
-            <Link to="/analysis" className="hover:text-foreground transition-colors">
-              ATS Analysis
-            </Link>
-            <Link to="/interview" className="hover:text-foreground transition-colors">
-              Interview Coach
-            </Link>
+
+          {/* Bottom Bar */}
+          <div className="pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} CareerPro. All rights reserved.
+            </p>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <Link to="/settings" className="hover:text-foreground transition-colors">
+                Settings
+              </Link>
+            </div>
           </div>
-          <p className="text-sm text-muted-foreground">
-            © 2024 CareerPro. All rights reserved.
-          </p>
         </div>
       </footer>
       <ScrollToTopButton />

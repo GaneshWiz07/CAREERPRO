@@ -9,6 +9,7 @@ import {
   Eye,
   MessagesSquare,
   TrendingUp,
+  Mail,
   ArrowRight,
   Zap,
   Shield,
@@ -94,6 +95,16 @@ const features = [
     className: "md:col-span-1",
     header: (
       <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-primary/10 via-muted/5 to-transparent" />
+    ),
+  },
+  {
+    title: "Cover Letter Generator",
+    description:
+      "Generate personalized cover letters tailored to specific jobs using AI. Multiple tones and lengths available.",
+    icon: <Mail className="h-6 w-6 text-primary" />,
+    className: "md:col-span-1",
+    header: (
+      <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-secondary/10 via-primary/5 to-transparent" />
     ),
   },
 ];
@@ -263,7 +274,7 @@ export default function LandingPage() {
               Complete Resume Toolkit
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Seven powerful AI tools to create, optimize, and perfect your resume for any opportunity.
+              Eight powerful AI tools to create, optimize, and perfect your resume and cover letter for any opportunity.
             </p>
           </motion.div>
 
@@ -372,6 +383,11 @@ export default function LandingPage() {
                 <li>
                   <Link to="/tailor" className="hover:text-foreground transition-colors">
                     Job Tailoring
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/cover-letter" className="hover:text-foreground transition-colors">
+                    Cover Letter
                   </Link>
                 </li>
                 <li>

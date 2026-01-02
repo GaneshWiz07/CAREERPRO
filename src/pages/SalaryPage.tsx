@@ -285,9 +285,9 @@ export default function SalaryPage() {
                       )}
                     </Label>
                     <div className="relative">
-                      <Input
-                        id="location"
-                        value={location}
+                    <Input
+                      id="location"
+                      value={location}
                         onChange={(e) => handleLocationChange(e.target.value)}
                         placeholder="e.g., Bangalore, Mumbai, New York"
                         className={autoDetectedCurrency && !manualCurrencyOverride ? 'pr-16' : ''}

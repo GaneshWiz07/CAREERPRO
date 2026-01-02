@@ -15,6 +15,7 @@ import ResumesPage from "./pages/ResumesPage";
 import InterviewPage from "./pages/InterviewPage";
 import SalaryPage from "./pages/SalaryPage";
 import HeatmapPage from "./pages/HeatmapPage";
+import CoverLetterPage from "./pages/CoverLetterPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/interview" element={<InterviewPage />} />
             <Route path="/salary" element={<SalaryPage />} />
             <Route path="/heatmap" element={<HeatmapPage />} />
+            <Route path="/cover-letter" element={<CoverLetterPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

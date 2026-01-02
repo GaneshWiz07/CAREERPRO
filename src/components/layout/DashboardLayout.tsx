@@ -10,6 +10,7 @@ import {
   Eye,
   MessagesSquare,
   TrendingUp,
+  Mail,
   Settings2,
   ChevronLeft,
   ChevronRight,
@@ -36,6 +37,7 @@ interface DashboardLayoutProps {
 const NAV_ITEMS = [
   { icon: FilePenLine, label: 'Resume Editor', shortLabel: 'Editor', path: '/editor' },
   { icon: ScanSearch, label: 'Job Tailoring', shortLabel: 'Tailor', path: '/tailor' },
+  { icon: Mail, label: 'Cover Letter', shortLabel: 'Cover', path: '/cover-letter' },
   { icon: Wand2, label: 'Achievement Transformer', shortLabel: 'Achieve', path: '/achievements' },
   { icon: ScanLine, label: 'ATS Analysis', shortLabel: 'ATS', path: '/analysis' },
   { icon: Eye, label: 'Recruiter Heatmap', shortLabel: 'Heatmap', path: '/heatmap' },

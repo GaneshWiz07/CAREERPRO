@@ -51,7 +51,7 @@ export default function SettingsPage() {
   return (
     <DashboardLayout>
       <div className="min-h-screen">
-        <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border">
+        <header className="sticky top-0 md:top-0 z-10 bg-background border-b border-border">
           <div className="px-4 sm:px-6 py-3 sm:py-4">
             <h1 className="text-xl sm:text-2xl font-semibold text-foreground">Settings</h1>
             <p className="text-xs sm:text-sm text-muted-foreground">

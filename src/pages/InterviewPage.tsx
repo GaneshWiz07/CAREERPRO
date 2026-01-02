@@ -79,12 +79,12 @@ export default function InterviewPage() {
         <motion.header 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border"
+          className="sticky top-0 md:top-0 z-10 bg-background border-b border-border"
         >
-          <div className="px-6 py-4">
-            <h1 className="text-2xl font-semibold text-foreground">AI Interview Coach</h1>
-            <p className="text-sm text-muted-foreground">
-              Generate likely interview questions based on your resume and target job
+          <div className="px-4 sm:px-6 py-4">
+            <h1 className="text-xl sm:text-2xl font-semibold text-foreground">AI Interview Coach</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Generate interview questions based on your resume and target job
             </p>
           </div>
         </motion.header>

@@ -172,7 +172,7 @@ export default function EditorPage() {
         <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border"
+          className="sticky top-0 md:top-0 z-10 bg-background border-b border-border"
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-3 sm:py-4 gap-3">
             <div className="min-w-0">

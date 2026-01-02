@@ -76,7 +76,7 @@ export default function ResumesPage() {
   return (
     <DashboardLayout>
       <div className="min-h-screen">
-        <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border">
+        <header className="sticky top-0 md:top-0 z-10 bg-background border-b border-border">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-6 py-3 sm:py-4">
             <div>
               <h1 className="text-xl sm:text-2xl font-semibold text-foreground">My Resumes</h1>
